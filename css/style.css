@@ -1,0 +1,39 @@
+body{	
+    font-family: Arial, sans-serif;
+}
+legend {
+    background-color: #e6e6e6;
+    font-size: 1rem;
+
+}
+label {
+    font-size: 0.9rem;
+    margin: 0em;
+}
+input {
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+#parameters {
+    width: 100%;
+    display: inline-block;
+}
+.parameters_inputs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.parameters_edge {
+    flex-basis: 50%;
+}
+fieldset {
+    max-width: 20%;
+    margin-bottom: 1rem;
+}
+#graf {
+    width: 90%;
+    height: 90vh;   
+    border: darkgrey 2px solid;
+    display: block;
+    margin: auto;
+}

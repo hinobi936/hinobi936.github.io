@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diplom</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/mdb.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body class="container">
+    <br>
+    <form id="parameters" class="parameters text-center" action="">
+        <h3>Заполните поля</h3>
+        <br>
+        <div class="parameters_inputs">
+            <fieldset>
+                <legend>Геометрические данные</legend>
+                <label for="material-width" class="">Толщина пластины (мм)</label>
+                <input type="text" class="" id="material-width">
+            </fieldset>
+            
+            <fieldset>
+                <legend>Тепло-физические характеристики</legend>
+                <label for="lambda" class="">Теплопроводность</label>
+                <input type="text" class="" id="lambda">
+                
+                <label for="cp" class="">Теплоёмкость</label>
+                <input type="text" class="" id="cp">
+                
+                <label for="ro" class="">Плотность</label>
+                <input type="text" class="" id="ro">
+            </fieldset>
+            <fieldset>
+                <legend>Временные условия</legend>
+                <label for=time" class="">Время рассчета (c)</label>
+                <input type="text" class="" id="time">
+            </fieldset>
+            
+            <fieldset>
+                <legend>Граничные условия (температуры)</legend>
+                <label for=Edge-left" class=" ">на левой границе</label>
+                <input type="text" class="" id="Edge-left">
+                
+                <label for=Edge-right" class=" ">на правой границе</label>
+                <input type="text" class="" id="Edge-right">
+            </fieldset>
+            <br>
+            <fieldset class="parameters_edge">
+                <legend>Укажите количество пространственных узлов (для графика)</legend>
+                <input type="text" class="" id="quantity">
+            </fieldset>
+        </div>
+        <button class="btn btn-primary">Вычислить</button>
+    </form>
+    <hr>
+    <br>
+    <canvas id="graf">
+
+    </canvas>
+
+
+
+    <script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/mdb.min.js"></script>
+    <script type="text/javascript" src="js/script.js"></script>
+
+</body>
+
+</html>
