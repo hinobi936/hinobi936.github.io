@@ -31,8 +31,8 @@ fieldset {
     margin-bottom: 1rem;
 }
 #graf {
-    width: 90%;
-    height: 90vh;   
+    width: 100%;
+    height: 100%;   
     border: darkgrey 2px solid;
     display: block;
     margin: auto;

@@ -19,47 +19,48 @@
             <fieldset>
                 <legend>Геометрические данные</legend>
                 <label for="material-width" class="">Толщина пластины (мм)</label>
-                <input type="text" class="" id="material-width">
+                <input type="text" class="" id="material-width" value="3">
             </fieldset>
             
             <fieldset>
                 <legend>Тепло-физические характеристики</legend>
                 <label for="lambda" class="">Теплопроводность</label>
-                <input type="text" class="" id="lambda">
+                <input type="text" class="" id="lambda" value="0.11">
                 
                 <label for="cp" class="">Теплоёмкость</label>
-                <input type="text" class="" id="cp">
+                <input type="text" class="" id="cp" value="1490">
                 
-                <label for="ro" class="">Плотность</label>
-                <input type="text" class="" id="ro">
+                <label for="ro" class="">Плотность (кг/м^3)</label>
+                <input type="text" class="" id="ro" value="550">
             </fieldset>
             <fieldset>
                 <legend>Временные условия</legend>
                 <label for=time" class="">Время рассчета (c)</label>
-                <input type="text" class="" id="time">
+                <input type="text" class="" id="time" value="500">
             </fieldset>
             
             <fieldset>
                 <legend>Граничные условия (температуры)</legend>
                 <label for=Edge-left" class=" ">на левой границе</label>
-                <input type="text" class="" id="Edge-left">
+                <input type="text" class="" id="Edge-left" value="500">
                 
                 <label for=Edge-right" class=" ">на правой границе</label>
-                <input type="text" class="" id="Edge-right">
+                <input type="text" class="" id="Edge-right" value="100">
             </fieldset>
             <br>
             <fieldset class="parameters_edge">
                 <legend>Укажите количество пространственных узлов (для графика)</legend>
-                <input type="text" class="" id="quantity">
+                <input type="text" class="" id="quantity" value="100">
             </fieldset>
         </div>
-        <button class="btn btn-primary">Вычислить</button>
+        <button disabled id="calculate" class="btn btn-primary">Вычислить</button>
     </form>
     <hr>
     <br>
     <canvas id="graf">
 
     </canvas>
+    <br>
 
 
 
