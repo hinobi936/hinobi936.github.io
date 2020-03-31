@@ -17,8 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.addEventListener('input', (e) => {
         element = e.target.tagName;
         // проверка принадлежности к Input
-        // console.log(element);
         if (element === 'INPUT') {
+            // console.log(element);
             checkEmpty();
             changeBorderInput();
         };
@@ -56,32 +56,58 @@ document.addEventListener('DOMContentLoaded', () => {
     calculateBtn.addEventListener('click', () => {
         event.preventDefault();
         // вытаскиваем значения полей
+        let lambdaVal = Number(lambda.value), cpVal = Number(cp.value), roVal = Number(ro.value),
+            timeVal = Number(time.value), edgeLeftVal = Number(edgeLeft.value), edgeRightVal = Number(edgeRight.value),
+            N = Number(quantity.value), materialWidthVal = Number(materialWidth.value);
 
-        lambdaVal = lambda.value; cpVal = cp.value; roVal = ro.value;
-        timeVal = time.value; edgeLeftVal = edgeLeft.value; edgeRightVal = edgeRight.value;
-        N = quantity.value; materialWidthVal = materialWidth.value;
+        let T0 = 20;
+        alfa[0] = 0;
+        beta[0] = edgeRightVal;
+
         // определяем шаги по времени и пространству
         const h = materialWidthVal / N;
         const tau = timeVal / N;
-        let i=100,j=100;
-        // T[0][0] = edgeLeftVal;
+        // T = new Array(N);
+        for (let i = 0; i < N + 1; i++) {
+            T[i] = [0];
+            for (let j = 0; j < N + 1; j++) {
+                T[i][j] = T0;
+            }
+            console.log(T);
+        }
+        // T = new Array(N).fill(new Array(N).fill(T0));
 
-        for (let i = 0; i < N; i++) {
-            T[j]=[]
-            for (let j = 0; j < N; j++) {
-                T[j][i]=0;
+
+        for (let i = 1; i < N + 1; i++) {
+            // T[j]=[]
+            for (let j = 0; j < N + 1; j++) {
+                // T[j][i]=;
                 A[j] = lambdaVal / (h * h);
+                console.log(A[j]);
                 B[j] = roVal * cpVal / tau + A[j];
+                console.log(B[j]);
                 C[j] = lambdaVal / (h * h);
-                F[j] = -((roVal * cpVal) / tau) * T[0][0];
-                alfa[j + 1] = A[j] / (B[j] - C[j] * alfa[j]);
-                beta[j + 1] = (C[j] * beta[j] - F[j]) / (B[j] - C[j] * alfa[j]);
-                // T[N][i]=edgeRightVal;
-
-                T[j + 1][i] = alfa[j + 1][i] * T[j][i] + beta[j + 1][i];
+                console.log(C[j]);
+                F[j] = -((roVal * cpVal) / tau) * T[j][i - 1];
+                console.log(F[j]);
+            }
+            for (let j = 1; j <= N+1; j++) {
+                alfa[j] = A[j] / (B[j] - C[j] * alfa[j - 1]);
+                console.log(alfa[j]);
+                beta[j] = (C[j] * beta[j - 1] - F[j]) / (B[j] - C[j] * alfa[j - 1]);
+                console.log(beta[j]);
             }
 
-            console.log(T[j + 1][i]);
+            T[(N + 1)][i] = edgeRightVal;
+
+            for (let j = 1; j <= N; j++) {
+                T[N + 1 - j][i] = alfa[N + 1 - j][i] * T[N + 2 - j][i] + beta[N + 1 - j][i];
+
+                console.log(T[j][i], T[N + 1 - j][i], alfa[N + 1 - j][i], T[N + 2 - j][i], beta[N + 1 - j][i]);
+            }
+
+            // T[j][i] = edgeRightVal;
+
         }
         // T[N][N];
 
