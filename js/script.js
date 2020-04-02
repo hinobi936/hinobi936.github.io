@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let T0 = firstTimeVal; //двумерный массив
         // одномерные массивы alfa beta
         alfa[0] = 0;
-        beta[0] = edgeRightVal;
+        beta[0] = edgeLeftVal;
 
         // определяем шаги по времени и пространству
         const h = materialWidthVal / N;
@@ -89,20 +89,20 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        for (let i = 0; i <= K + 1; i++) {
+        for (let i = 1; i <= K + 1; i++) {
             // определяем коэффициенты
-            // console.log("===================  i = ", i, " =================== ");
+            console.log("===================  i = ", i, " =================== ");
             for (let j = 0; j <= N + 1; j++) {
                 // console.log("____ j = ", j, " ____");
                 // console.log("____ A, B, С, F ____");
                 A[j] = lambdaVal / (h * h);
                 // console.log(A[j]);
-                B[j] = roVal * cpVal / tau + A[j];
+                B[j] = (roVal * cpVal) / tau + 2 * (lambdaVal / (h * h));
                 // console.log(B[j]);
                 C[j] = lambdaVal / (h * h);
                 // console.log(C[j]);
-                F[j] = -((roVal * cpVal) / tau) * T[j][i];
-                // console.log(T[j][i - 1]);
+                F[j] = -((roVal * cpVal) / tau) * T[j][i - 1];
+                console.log(T[j][i - 1]);
             }
 
             for (let j = 1; j <= N + 1; j++) {
@@ -111,11 +111,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 alfa[j] = A[j] / (B[j] - C[j] * alfa[j - 1]);
                 // console.log(alfa[j]);
                 beta[j] = (C[j] * beta[j - 1] - F[j]) / (B[j] - C[j] * alfa[j - 1]);
-                // console.log(beta[j]);
+                console.log(beta);
             }
 
             // устанавливаем граничное условие для внешнего слоя металла
-            T[(N + 1)][i] = edgeLeftVal;
+            T[(N + 1)][i] = edgeRightVal;
+            console.log(T[(N + 1)][i]);
             // width_layer = 0;
 
             // определям температуру в каждом узле [j][i]
@@ -127,8 +128,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 // console.log("____  T[N + 2 - j][i] = " , T[N + 2 - j][i] ," ____");
                 // console.log("____  beta[N + 1 - j] = " , beta[N + 1 - j]," ____");
                 // width_layer += T[N - j][i] + "__";
-                // console.log(T[j][i], T[N + 1 - j][i], alfa[N + 1 - j][i], T[N + 2 - j][i], beta[N + 1 - j][i]);
+                // console.log(T[j][i], T[N - j][i], alfa[N - j], T[N + 1 - j][i], beta[N  - j]);
             }
+            // beta[0] = T0;
         }
 
         // вывод массива на страницу
@@ -148,7 +150,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // вывод массива на страницу 2й способ
         let table = document.createElement('table');
         for (let i = 0; i <= K + 1; i++) {
-
             let tr = document.createElement('tr');
             let th = document.createElement('th');
             th.setAttribute('colspan', N + 2);
@@ -160,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tr = document.createElement('tr');
             for (let j = 0; j <= N + 1; j++) {
                 let th = document.createElement('th');
-                th.innerHTML = ` СЛОЙ ${j} `;
+                th.innerHTML = ` СЛОЙ ${j}`;
                 tr.appendChild(th);
             }
             table.appendChild(tr);
@@ -178,14 +179,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // создаем массив для canvas
         let Txy = [];
-        for (let i = 0; i <= K+1; i++) {
-            Txy[i]=0;            
+        for (let i = 0; i <= K + 1; i++) {
+            Txy[i] = 0;
         }
 
         // определяем координаты для построения
         for (let i = 0; i <= K + 1; i++) {
             for (let j = 1; j <= N + 1; j++) {
-                if (T[j][i] > T[j-1][i]) {
+                if (T[j][i] > T[j - 1][i]) {
                     Txy[i] = T[j][i];
                 }
             }
