@@ -14,12 +14,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const calculateBtn = document.getElementById('calculate');
     const inputs = document.querySelectorAll('input');
     const dataOut = document.getElementById('dataOut');
+    let myCanvas = document.getElementById("graf");
+    let ctx = myCanvas.getContext("2d");
+
+
 
     let width_layer, time_layer, calculateData;
     calculateData = document.createElement('p');
 
-    // двумерный массив данных температур
+    // двумерный массив данных для температур
     let T = [];
+    let Txy = []; //для canvas
     // одномерные массивы 
     let alfa = [0], beta = [0], A = [0], B = [0], C = [0], F = [0];
 
@@ -50,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function enableCalculation() {
         calculateBtn.disabled = false;
-    }
+    };
     function changeBorderInput() {
         for (let i = 0; i < inputs.length; i++) {
             if (inputs[i].value == "") {
@@ -60,10 +65,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 inputs[i].style.border = "";
             }
         }
-    }
+    };
+
+    function updateValues() {
+
+    };
+
+    function createMasTemperature() {
+
+    };
 
     calculateBtn.addEventListener('click', () => {
         event.preventDefault();
+        updateValues();
+        createMasTemperature();
         dataOut.innerHTML = '';
 
         // вытаскиваем значения полей
@@ -88,10 +103,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 T[i][j] = T0;
             }
         }
-
+        //рассчет данных
         for (let i = 1; i <= K + 1; i++) {
             // определяем коэффициенты
-            console.log("===================  i = ", i, " =================== ");
+            // console.log("===================  i = ", i, " =================== ");
             for (let j = 0; j <= N + 1; j++) {
                 // console.log("____ j = ", j, " ____");
                 // console.log("____ A, B, С, F ____");
@@ -102,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 C[j] = lambdaVal / (h * h);
                 // console.log(C[j]);
                 F[j] = -((roVal * cpVal) / tau) * T[j][i - 1];
-                console.log(T[j][i - 1]);
+                // console.log(T[j][i - 1]);
             }
 
             for (let j = 1; j <= N + 1; j++) {
@@ -111,12 +126,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 alfa[j] = A[j] / (B[j] - C[j] * alfa[j - 1]);
                 // console.log(alfa[j]);
                 beta[j] = (C[j] * beta[j - 1] - F[j]) / (B[j] - C[j] * alfa[j - 1]);
-                console.log(beta);
+                // console.log(beta);
             }
 
             // устанавливаем граничное условие для внешнего слоя металла
             T[(N + 1)][i] = edgeRightVal;
-            console.log(T[(N + 1)][i]);
+            // console.log(T[(N + 1)][i]);
             // width_layer = 0;
 
             // определям температуру в каждом узле [j][i]
@@ -177,27 +192,42 @@ document.addEventListener('DOMContentLoaded', () => {
         dataOut.appendChild(table);
         console.log(T);
 
+        myCanvas.width = K;
+        myCanvas.height = N;
+        ctx.clear;
+        ctx.transform(1, 0, 0, -1, 0, myCanvas.height)
+        ctx.strokeStyle = "BLUE";
+        ctx.lineWidth = 1;
+        ctx.setLineDash([1]);
+
         // создаем массив для canvas
-        let Txy = [];
+        Txy = [];
         for (let i = 0; i <= K + 1; i++) {
             Txy[i] = 0;
         }
-
+        
         // определяем координаты для построения
-        for (let i = 0; i <= K + 1; i++) {
-            for (let j = 1; j <= N + 1; j++) {
-                if (T[j][i] > T[j - 1][i]) {
-                    Txy[i] = T[j][i];
+        for (let i = 1; i <= K + 1; i++) {
+            for (let j = 0; j <= N - 1; j++) {
+                if (T[N - j][i] >= T[N + 1 - j][i]) {
+                    Txy[i] = T[N - j][i];
                 }
             }
+            drawLine(ctx, i - 1, Txy[i - 1], i, Txy[i]);
+            console.log(ctx);
+
         }
         console.log("  Txy[i] = ", Txy);
 
-
     })
 
+    function drawLine(ctx, startX, startY, endX, endY) {
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+    }
+
     checkEmpty();
-
-
 
 });
