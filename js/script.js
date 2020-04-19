@@ -14,10 +14,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const calculateBtn = document.getElementById('calculate');
     const inputs = document.querySelectorAll('input');
     const dataOut = document.getElementById('dataOut');
+
+    let lambdaVal, cpVal, roVal, timeVal, edgeLeftVal, edgeRightVal,
+        N, K, materialWidthVal, firstTimeVal;
+
     let myCanvas = document.getElementById("graf");
     let ctx = myCanvas.getContext("2d");
-
-
 
     let width_layer, time_layer, calculateData;
     calculateData = document.createElement('p');
@@ -56,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function enableCalculation() {
         calculateBtn.disabled = false;
     };
+
     function changeBorderInput() {
         for (let i = 0; i < inputs.length; i++) {
             if (inputs[i].value == "") {
@@ -68,25 +71,14 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     function updateValues() {
-
-    };
-
-    function createMasTemperature() {
-
-    };
-
-    calculateBtn.addEventListener('click', () => {
-        event.preventDefault();
-        updateValues();
-        createMasTemperature();
-        dataOut.innerHTML = '';
-
-        // вытаскиваем значения полей
-        let lambdaVal = Number(lambda.value), cpVal = Number(cp.value), roVal = Number(ro.value),
+        lambdaVal = Number(lambda.value), cpVal = Number(cp.value), roVal = Number(ro.value),
             timeVal = Number(time.value), edgeLeftVal = Number(edgeLeft.value), edgeRightVal = Number(edgeRight.value),
             N = Number(devideWidth.value), K = Number(devideTime.value),
             materialWidthVal = Number(materialWidth.value), firstTimeVal = Number(firstTime.value);
+    };
 
+    function createMasTemperature() {
+        // вытаскиваем значения полей
         let T0 = firstTimeVal; //двумерный массив
         // одномерные массивы alfa beta
         alfa[0] = 0;
@@ -147,7 +139,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             // beta[0] = T0;
         }
+    };
 
+    function printMas() {
+        dataOut.innerHTML = '';
         // вывод массива на страницу
         // for (let i = 0; i <= N + 1; i++) {
         //     calculateData = document.createElement('p');
@@ -190,8 +185,10 @@ document.addEventListener('DOMContentLoaded', () => {
             table.appendChild(tr);
         }
         dataOut.appendChild(table);
-        console.log(T);
 
+    };
+
+    function printGraf() {
         myCanvas.width = K;
         myCanvas.height = N;
         ctx.clear;
@@ -205,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i <= K + 1; i++) {
             Txy[i] = 0;
         }
-        
+
         // определяем координаты для построения
         for (let i = 1; i <= K + 1; i++) {
             for (let j = 0; j <= N - 1; j++) {
@@ -217,17 +214,24 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(ctx);
 
         }
-        console.log("  Txy[i] = ", Txy);
-
-    })
+    };
 
     function drawLine(ctx, startX, startY, endX, endY) {
         ctx.beginPath();
         ctx.moveTo(startX, startY);
         ctx.lineTo(endX, endY);
         ctx.stroke();
-    }
+    };
 
-    checkEmpty();
+    calculateBtn.addEventListener('click', () => {
+        event.preventDefault();
+        updateValues();
+        createMasTemperature();
+        printMas();
+        printGraf();
+        console.log(T);
+        console.log("  Txy[i] = ", Txy);
+    })
+
 
 });
