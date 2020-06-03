@@ -21,15 +21,15 @@
                 <label for="material-width" class="">Толщина пластины (мм)</label>
                 <input type="number" class="" id="material-width" value="3">
             </fieldset>
-            
+
             <fieldset>
                 <legend>Тепло-физические характеристики</legend>
                 <label for="lambda" class="">Теплопроводность (Вт/(м·С&deg))</label>
                 <input type="number" class="" id="lambda" value="0.11">
-                
+
                 <label for="cp" class="">Теплоёмкость (Дж/кг*С&deg)</label>
                 <input type="number" class="" id="cp" value="1490">
-                
+
                 <label for="ro" class="">Плотность (кг/м^3)</label>
                 <input type="number" class="" id="ro" value="550">
             </fieldset>
@@ -38,12 +38,12 @@
                 <label for=time" class="">Время рассчета (c)</label>
                 <input type="number" class="" id="time" value="500">
             </fieldset>
-            
+
             <fieldset>
                 <legend>Граничные условия (температуры, С&deg)</legend>
                 <label for=Edge-left" class=" ">на левой границе</label>
                 <input type="number" class="" id="Edge-left" value="500">
-                
+
                 <label for=Edge-right" class=" ">на правой границе</label>
                 <input type="number" class="" id="Edge-right" value="100">
 
@@ -63,7 +63,7 @@
         <button id="calculate" class="btn btn-primary">Вычислить</button>
     </form>
     <hr>
-    
+
     <br>
     <canvas id="graf">
     </canvas>
@@ -79,4 +79,5 @@
     <script type="text/javascript" src="js/mdb.min.js"></script>
     <script type="text/javascript" src="js/script.js"></script>
 </body>
+
 </html>

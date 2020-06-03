@@ -210,9 +210,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     Txy[i] = T[N - j][i];
                 }
             }
-            drawLine(ctx, i - 1, Txy[i - 1], i, Txy[i]);
+            drawLine(ctx, (i - 1), (Txy[i - 1]), i, Txy[i]);
             console.log(ctx);
-
         }
     };
 
