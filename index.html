@@ -14,7 +14,6 @@
     <br>
     <form id="parameters" class="parameters text-center" action="">
         <h3>Заполните поля</h3>
-        <br>
         <div class="parameters_inputs">
             <fieldset>
                 <legend>Геометрические данные</legend>
@@ -57,7 +56,8 @@
             </fieldset>
 
             <fieldset>
-                <legend>Граничные условия (температуры, С&deg)</legend>
+                <legend>Измеренные значения температур при испытаниях материала <br>
+                     (температуры С&deg, время (секунды))</legend>
                 <table id="temperatureValues" border="1">
                     <tr>
                         <th>Время</td>
@@ -107,10 +107,8 @@
         </div>
         <button id="calculate" class="btn btn-primary">Вычислить</button>
     </form>
-    <hr>
-
     <br>
-    <canvas id="graf">
+    <canvas id="graf" hidden>
     </canvas>
     <br>
 
