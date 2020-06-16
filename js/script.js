@@ -1,22 +1,39 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const materialWidth = document.getElementById('material-width');
-    const lambda = document.getElementById('lambda');
-    const cp = document.getElementById('cp');
-    const ro = document.getElementById('ro');
-    const time = document.getElementById('time');
-    const edgeLeft = document.getElementById('Edge-left');
-    const edgeRight = document.getElementById('Edge-right');
-    const firstTime = document.getElementById('firstTime');
+    const thick_k = document.getElementById('material-width_k');
+    const thick_p = document.getElementById('material-width_p');
+    const thick_tzp = document.getElementById('material-width_tzp');
+    const thick_Xmc = document.getElementById('material-width_xmc');
 
-    const devideWidth = document.getElementById('devideWidth');
-    const devideTime = document.getElementById('devideTime');
+    const lambda_k = document.getElementById('lambda_k');
+    const cp_k = document.getElementById('cp_k');
+    const ro_k = document.getElementById('ro_k');
+
+    const lambda_p = document.getElementById('lambda_p');
+    const cp_p = document.getElementById('cp_p');
+    const ro_p = document.getElementById('ro_p');
+
+    const ro_tzp = document.getElementById('ro_tzp');
+
+    const temperatureValues = document.getElementById('temperatureValues');
 
     const calculateBtn = document.getElementById('calculate');
     const inputs = document.querySelectorAll('input');
     const dataOut = document.getElementById('dataOut');
 
-    let lambdaVal, cpVal, roVal, timeVal, edgeLeftVal, edgeRightVal,
-        N, K, materialWidthVal, firstTimeVal;
+    let
+        // толщина крышки, подложки, углеалстика и координаты Xmc соответственно
+        thick_kVal, thick_pVal, thick_tzpVal, thick_XmcVal,
+        // теплопроводность крышки и подложки соответственно
+        lambda_kVal, lambda_pVal,
+        // теплоемкость крышки и подложки соответственно
+        cp_kVal, cp_pVal,
+        // плотность крышки, подложки и углепластика соответственно
+        ro_kVal, ro_pVal, ro_tzpVal;
+
+    const tempVal = {}
+
+    // let lambdaVal, cpVal, roVal, timeVal, edgeLeftVal, edgeRightVal,
+    //     N, K, materialWidthVal, firstTimeVal;
 
     let myCanvas = document.getElementById("graf");
     let ctx = myCanvas.getContext("2d");
@@ -55,10 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    function enableCalculation() {
-        calculateBtn.disabled = false;
-    };
-
     function changeBorderInput() {
         for (let i = 0; i < inputs.length; i++) {
             if (inputs[i].value == "") {
@@ -69,75 +82,83 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     };
-
+    // обновление всех переменных
     function updateValues() {
-        lambdaVal = Number(lambda.value), cpVal = Number(cp.value), roVal = Number(ro.value),
-            timeVal = Number(time.value), edgeLeftVal = Number(edgeLeft.value), edgeRightVal = Number(edgeRight.value),
-            N = Number(devideWidth.value), K = Number(devideTime.value),
-            materialWidthVal = Number(materialWidth.value), firstTimeVal = Number(firstTime.value);
+        thick_kVal = Number(thick_k.value),
+            thick_pVal = Number(thick_p.value),
+            thick_tzpVal = Number(thick_tzp.value),
+            thick_XmcVal = Number(thick_Xmc.value),
+            lambda_kVal = Number(lambda_k.value),
+            lambda_pVal = Number(lambda_p.value),
+            cp_kVal = Number(cp_k.value), cp_pVal = Number(cp_p.value),
+            ro_kVal = Number(ro_k.value), ro_pVal = Number(ro_p.value),
+            ro_tzpVal = Number(ro_tzp.value);
     };
 
-    function createMasTemperature() {
-        // вытаскиваем значения полей
-        let T0 = firstTimeVal; //двумерный массив
-        // одномерные массивы alfa beta
-        alfa[0] = 0;
-        beta[0] = edgeLeftVal;
+    // чтение данных из таблицы в массив
+    function readTemperature() {
+        // table
+        const currRows = temperatureValues.querySelectorAll('tr')
+        // чтение строки (tr)
+        for (let j = 1; j < currRows.length; j++) {
+            tempVal[j] = []
+            const currRow = currRows[j]
+            const cells = currRow.querySelectorAll('td')
 
-        // определяем шаги по времени и пространству
-        const h = materialWidthVal / N;
-        const tau = timeVal / N;
-
-        // заполняем массив температур
-        for (let i = 0; i <= N + 1; i++) {
-            T[i] = [0];
-            for (let j = 0; j <= K + 1; j++) {
-                T[i][j] = T0;
+            // чтение столбцов (td)
+            for (let k = 0; k < cells.length - 1; k++) {
+                let name = cells[k].children[0].name;
+                // запись значения столбца в массив 
+                tempVal[j][name] = cells[k].children[0].value;
+                // console.log(cells[k].children[0].value)
             }
         }
+        console.log(tempVal)
+    }
+    // расчет теплопроводности и теплоемкости
+    function createMasCharacteristic(massiv) {
+        // определяем количество строк в таблице
+        let N = Object.keys(massiv).length;
+        // console.log(Object.keys(massiv).length-1);
+        let time = [], tempK = [], tempP = [], tempTZP = [],
+            bk, bp, bmc, tk, tp, tx_tau;
+
+        // заполняем массивы time, tempK, tempP, tempTZP
+        for (let i = 0; i < N; i++) {
+            time[i] = massiv[i + 1].time;
+            tempK[i] = massiv[i + 1].tempK;
+            tempP[i] = massiv[i + 1].tempP;
+            tempTZP[i] = massiv[i + 1].tempTZP;
+        }
+
         //рассчет данных
-        for (let i = 1; i <= K + 1; i++) {
-            // определяем коэффициенты
-            // console.log("===================  i = ", i, " =================== ");
-            for (let j = 0; j <= N + 1; j++) {
-                // console.log("____ j = ", j, " ____");
-                // console.log("____ A, B, С, F ____");
-                A[j] = lambdaVal / (h * h);
-                // console.log(A[j]);
-                B[j] = (roVal * cpVal) / tau + 2 * (lambdaVal / (h * h));
-                // console.log(B[j]);
-                C[j] = lambdaVal / (h * h);
-                // console.log(C[j]);
-                F[j] = -((roVal * cpVal) / tau) * T[j][i - 1];
-                // console.log(T[j][i - 1]);
-            }
+        for (let i = 0; i < N - 1; i++) {
+            // расчет коэффициентов bk, bp, bmc
+            //toFixed - округление до 3 точки после запятой
+            bk = ((tempK[i + 1] - tempK[i]) / Math.sqrt(time[i + 1] - time[i])).toFixed(3);
+            bp = ((tempP[i + 1] - tempP[i]) / Math.sqrt(time[i + 1] - time[i])).toFixed(3);
+            bmc = ((tempTZP[i + 1] - tempTZP[i]) / Math.sqrt(time[i + 1] - time[i])).toFixed(3);
+            console.log(bk, bmc, bp);
 
-            for (let j = 1; j <= N + 1; j++) {
-                // console.log("____ j = ", j, " ____");
-                // console.log("____ alfa, beta ____")
-                alfa[j] = A[j] / (B[j] - C[j] * alfa[j - 1]);
-                // console.log(alfa[j]);
-                beta[j] = (C[j] * beta[j - 1] - F[j]) / (B[j] - C[j] * alfa[j - 1]);
-                // console.log(beta);
-            }
+            let a = lambda_kVal / (cp_kVal * ro_kVal);
+            // число Фурье при всех итерациях в расчете вышло меньше 0.004 
+            let Fo = a * (time[i + 1] - time[i]) / thick_tzpVal;
+            console.log(Fo);
 
-            // устанавливаем граничное условие для внешнего слоя металла
-            T[(N + 1)][i] = edgeRightVal;
-            // console.log(T[(N + 1)][i]);
-            // width_layer = 0;
+            // расчет констант с1 и с2 для квадратного уравнения
+            let c1 = ((tempK[i] - tempP[i]) * Math.pow(thick_XmcVal, 2) -
+                (tempK[i] - tempTZP[i]) * Math.pow(thick_tzpVal, 2)) /
+                (thick_tzpVal * thick_XmcVal * (thick_tzpVal - thick_XmcVal));
+            console.log(c1);
+            let c2 = ((tempK[i] - tempTZP[i]) * thick_tzpVal - (tempK[i] - tempP[i]) * thick_XmcVal) /
+                (thick_tzpVal * thick_XmcVal * (thick_tzpVal - thick_XmcVal));
+            console.log(c2);
 
-            // определям температуру в каждом узле [j][i]
-            for (let j = 0; j <= N; j++) {
-                T[N - j][i] = alfa[N - j] * T[N + 1 - j][i] + beta[N - j];
-                // console.log("____ j = ", j, " ____");
-                // console.log("____ T[N + 1 - j][i] = " ,T[N + 1 - j][i] ," ____");
-                // console.log("____ alfa [N + 1 - j] = " ,alfa[N + 1 - j] ," ____");
-                // console.log("____  T[N + 2 - j][i] = " , T[N + 2 - j][i] ," ____");
-                // console.log("____  beta[N + 1 - j] = " , beta[N + 1 - j]," ____");
-                // width_layer += T[N - j][i] + "__";
-                // console.log(T[j][i], T[N - j][i], alfa[N - j], T[N + 1 - j][i], beta[N  - j]);
-            }
-            // beta[0] = T0;
+            // рассчитываем интеграл
+            tx_tau = tempTZP[i] * thick_tzpVal +
+                c1 * (Math.pow(thick_tzpVal, 2) / 2) + c2 * (Math.pow(thick_tzpVal, 3) / 3);
+            console.log(tx_tau);
+
         }
     };
 
@@ -225,11 +246,14 @@ document.addEventListener('DOMContentLoaded', () => {
     calculateBtn.addEventListener('click', () => {
         event.preventDefault();
         updateValues();
-        createMasTemperature();
-        printMas();
-        printGraf();
-        console.log(T);
-        console.log("  Txy[i] = ", Txy);
+        readTemperature()
+        createMasCharacteristic(tempVal);
+        // printMas();
+        // printGraf();
+    })
+
+    document.addEventListener('click', (e) => {
+        // console.log(e)
     })
 
 

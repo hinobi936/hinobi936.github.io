@@ -2,29 +2,33 @@ body{
     font-family: Arial, sans-serif;
 }
 legend {
-    background-color: #e6e6e6;
+    background-color: #bed4fc;
     font-size: 1rem;
 
 }
 label {
     font-size: 0.9rem;
-    margin: 0em;
+    margin: 1rem 0 0;
+
 }
 input {
-    margin-bottom: 0.5rem;
     text-align: center;
 }
 p, hr {
     margin: 0.1rem;
 }
+table {
+    border-spacing: 10px;
+}
+
 table, th, tr, td {
     text-align: center;
+    padding: 5px 10px;
 }
-table {
-    width: 100%;
-    /* transform: rotate(-90deg); */
+
+table th{
+    font-weight: bold;
 }
-/* table td {transform: rotate(90deg);} */
 
 #parameters {
     width: 100%;
@@ -46,6 +50,7 @@ fieldset {
     text-align: center;
     background-color: rgb(210, 199, 255);
 }
+
 #graf {
     width: 50%;
     max-height: 70vh;   

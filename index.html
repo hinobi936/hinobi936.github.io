@@ -18,47 +18,92 @@
         <div class="parameters_inputs">
             <fieldset>
                 <legend>Геометрические данные</legend>
-                <label for="material-width" class="">Толщина пластины (мм)</label>
-                <input type="number" class="" id="material-width" value="3">
+                <label for="material-width" class="">Толщина крышки (м<sup>2</sup>)</label>
+                <input type="number" class="" id="material-width_k" value="0.003">
+                <label for="material-width" class="">Толщина подложки (м<sup>2</sup>)</label>
+                <input type="number" class="" id="material-width_p" value="0.003">
+                <label for="material-width" class="">Толщина теплозащитного слоя (м<sup>2</sup>)</label>
+                <input type="number" class="" id="material-width_tzp" value="0.006">
+                <label for="material-width" class="">Координата Xмс (м<sup>2</sup>)</label>
+                <input type="number" class="" id="material-width_xmc" value="0.002">
             </fieldset>
 
             <fieldset>
-                <legend>Тепло-физические характеристики</legend>
+                <legend>Тепло-физические характеристики крышки</legend>
                 <label for="lambda" class="">Теплопроводность (Вт/(м·С&deg))</label>
-                <input type="number" class="" id="lambda" value="0.11">
+                <input type="number" class="" id="lambda_k" value="0.11">
 
                 <label for="cp" class="">Теплоёмкость (Дж/кг*С&deg)</label>
-                <input type="number" class="" id="cp" value="1490">
+                <input type="number" class="" id="cp_k" value="1490">
 
                 <label for="ro" class="">Плотность (кг/м^3)</label>
-                <input type="number" class="" id="ro" value="550">
+                <input type="number" class="" id="ro_k" value="550">
             </fieldset>
             <fieldset>
-                <legend>Временные условия</legend>
-                <label for=time" class="">Время рассчета (c)</label>
-                <input type="number" class="" id="time" value="500">
+                <legend>Тепло-физические характеристики подложки</legend>
+                <label for="lambda" class="">Теплопроводность (Вт/(м·С&deg))</label>
+                <input type="number" class="" id="lambda_p" value="0.11">
+
+                <label for="cp" class="">Теплоёмкость (Дж/кг*С&deg)</label>
+                <input type="number" class="" id="cp_p" value="1490">
+
+                <label for="ro" class="">Плотность (кг/м^3)</label>
+                <input type="number" class="" id="ro_p" value="550">
+            </fieldset>
+            <fieldset>
+                <legend>Плотность теплозащитного материала</legend>
+                <label for="ro" class="">Плотность (кг/м^3)</label>
+                <input type="number" class="" id="ro_tzp" value="550">
             </fieldset>
 
             <fieldset>
                 <legend>Граничные условия (температуры, С&deg)</legend>
-                <label for=Edge-left" class=" ">на левой границе</label>
-                <input type="number" class="" id="Edge-left" value="500">
-
-                <label for=Edge-right" class=" ">на правой границе</label>
-                <input type="number" class="" id="Edge-right" value="100">
-
-                <label for=firstTime" class=" ">в начальный момент времени</label>
-                <input type="number" class="" id="firstTime" value="20">
+                <table id="temperatureValues" border="1">
+                    <tr>
+                        <th>Время</td>
+                        <th>Температура крышки</td>
+                        <th>Температура подложки</td>
+                        <th>Температура теплозащитного материала</td>
+                    </tr>
+                    <tr>
+                        <td><input type="number" name="time" value="144"></td>
+                        <td><input type="number" name="tempK" value="328.1"></td>
+                        <td><input type="number" name="tempP" value="20.4"></td>
+                        <td><input type="number" name="tempTZP" value="125"></td>
+                        <td><button>&#10008</button></td>
+                    </tr>
+                    <tr>
+                        <td><input type="number" name="time" value="200"></td>
+                        <td><input type="number" name="tempK" value="288.1"></td>
+                        <td><input type="number" name="tempP" value="40.1"></td>
+                        <td><input type="number" name="tempTZP" value="173.5"></td>
+                        <td><button>&#10008</button></td>
+                    </tr>
+                    <tr>
+                        <td><input type="number" name="time" value="302"></td>
+                        <td><input type="number" name="tempK" value="230.5"></td>
+                        <td><input type="number" name="tempP" value="70.4"></td>
+                        <td><input type="number" name="tempTZP" value="162.8"></td>
+                        <td><button>&#10008</button></td>
+                    </tr>
+                    <tr>
+                        <td><input type="number" name="time" value="500"></td>
+                        <td><input type="number" name="tempK" value="164.6"></td>
+                        <td><input type="number" name="tempP" value="94.3"></td>
+                        <td><input type="number" name="tempTZP" value="136.5"></td>
+                        <td><button>&#10008</button></td>
+                    </tr>
+                    <tr>
+                        <td><input type="number" name="time" value="700"></td>
+                        <td><input type="number" name="tempK" value="129.8"></td>
+                        <td><input type="number" name="tempP" value="97.2"></td>
+                        <td><input type="number" name="tempTZP" value="118.4"></td>
+                        <td><button>&#10008</button></td>
+                    </tr>
+                </table>
             </fieldset>
             <br>
-            <fieldset class="parameters_edge">
-                <legend>Укажите количество пространственных узлов (для графика)</legend>
-                <label for=devideWidth" class=" ">разбиение по толщине пластины</label>
-                <input type="number" class="" id="devideWidth" value=6>
 
-                <label for=devideTime" class=" ">разбиение по времени</label>
-                <input type="number" class="" id="devideTime" value=4>
-            </fieldset>
         </div>
         <button id="calculate" class="btn btn-primary">Вычислить</button>
     </form>
