@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         N;
 
     // переменные для хранения значений теплопроводности и теплоемкости углепластика
-    let cp_mc = [], lambda_mc = [];
+    let cp_mc = [], lambda_mc = [], CpMc = 0, LambdaMc = 0;
 
     // для записи данных времени и температур из таблицы измеренных температур
     const tempVal = {};
@@ -93,7 +93,8 @@ document.addEventListener('DOMContentLoaded', () => {
             lambda_pVal = Number(lambda_p.value),
             cp_kVal = Number(cp_k.value), cp_pVal = Number(cp_p.value),
             ro_kVal = Number(ro_k.value), ro_pVal = Number(ro_p.value),
-            ro_tzpVal = Number(ro_tzp.value);
+            ro_tzpVal = Number(ro_tzp.value),
+            CpMc = 0, LambdaMc = 0;
     };
 
     // чтение данных из таблицы в массив
@@ -142,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let a = lambda_kVal / (cp_kVal * ro_kVal);
             // число Фурье при всех итерациях в расчете вышло меньше 0.004 
             let Fo = a * (time[i + 1] - time[i]) / thick_tzpVal;
-            console.log(Fo);
+            // console.log(Fo);
 
             // расчет констант с1 и с2 для квадратного уравнения
             c1[i] = ((tempK[i] - tempP[i]) * Math.pow(thick_XmcVal, 2) -
@@ -164,23 +165,22 @@ document.addEventListener('DOMContentLoaded', () => {
             // console.log(tx_tau);
 
             // рассчет теплоемкости cp[i]
-            console.log(
-                tempK[i + 1],
-                Math.sqrt(Math.PI),
-                bk,
-                bp,
-                time[i + 1],
-                time[i],
-                thick_tzpVal,
-                ro_tzpVal,
-                Math.sqrt(ro_tzpVal),
-                lambda_kVal,
-                cp_kVal,
-                Math.sqrt(lambda_kVal / cp_kVal),
-                Math.sqrt(cp_kVal / lambda_kVal),
-                Math.sqrt(Math.PI)
-
-            );
+            // console.log(
+            //     tempK[i + 1],
+            //     Math.sqrt(Math.PI),
+            //     bk,
+            //     bp,
+            //     time[i + 1],
+            //     time[i],
+            //     thick_tzpVal,
+            //     ro_tzpVal,
+            //     Math.sqrt(ro_tzpVal),
+            //     lambda_kVal,
+            //     cp_kVal,
+            //     Math.sqrt(lambda_kVal / cp_kVal),
+            //     Math.sqrt(cp_kVal / lambda_kVal),
+            //     Math.sqrt(Math.PI)
+            // );
 
             let equal = (tempK[i + 1] - ((Math.sqrt(Math.PI)) * (bk[i] + bp[i]) * (time[i + 1] - time[i])
                 / 2 * thick_tzpVal * Math.sqrt(ro_tzpVal)) * (Math.sqrt(lambda_kVal / cp_kVal)) +
@@ -192,11 +192,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let znamenatel = ro_kVal * thick_tzpVal * equal - ro_tzpVal * tx_tau[i];
             cp_mc[i] = (chislitel / znamenatel);
-            console.log(equal, chislitel, znamenatel, cp_mc);
-            cp_mc[i]=cp_mc[i].toFixed(3)
+            cp_mc[i] = Number(cp_mc[i].toFixed(3));
+            // console.log(equal, chislitel, znamenatel, cp_mc);
 
-
+            // расчет теплопроводности
+            lambda_mc[i] = cp_mc[i] * (bp[i] * bp[i] / (tempK[i] - tempP[i]) * (tempK[i] - tempP[i]));
+            lambda_mc[i] = Number(lambda_mc[i].toFixed(3));
+            console.log(cp_mc[i], lambda_mc[i]);
         }
+
+        // среднее арифметическое значений теплоемкости и теплопроводности
+        for (let i = 0; i < N - 1; i++) {
+            CpMc += cp_mc[i];
+            LambdaMc += lambda_mc[i];
+            console.log(CpMc, LambdaMc, cp_mc[i], lambda_mc[i]);
+        }
+        CpMc = Number(CpMc / (N - 1).toFixed(3));
+        LambdaMc = Number(LambdaMc / (N - 1).toFixed(3));
     };
 
     function printMas() {
@@ -216,6 +228,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // }
 
         // вывод массива на страницу 2й способ
+        calculateData.innerHTML = ` Cp = ${CpMc}, <br> Lambda = ${LambdaMc} `;
+        dataOut.appendChild(calculateData);
+
         let table = document.createElement('table');
         for (let i = 0; i < N - 1; i++) {
             let tr = document.createElement('tr');
@@ -231,7 +246,8 @@ document.addEventListener('DOMContentLoaded', () => {
             td.innerHTML = `<em> bk = ${bk[i]}, bp = ${bp[i]}, bmc = ${bmc[i]}, <br>
             c1 = ${c1[i]}, c2 = ${c2[i]}, <br>
             tx_tau = ${tx_tau[i]}, <br>
-            теплоемкость cp_mc = ${cp_mc[i]} </em>`
+            теплоемкость cp_mc = ${cp_mc[i]} , <br>
+            теплопроводность lambda_mc = ${lambda_mc[i]} </em>`
 
             tr.appendChild(td);
 

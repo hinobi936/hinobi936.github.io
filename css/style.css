@@ -18,11 +18,12 @@ input {
 }
 p, hr {
     margin: 0.1rem;
+    text-align: center;
 }
 table {
     border-spacing: 10px;
     width: 50%;
-    margin: 0 auto;
+    margin: 1.2rem auto;
 }
 
 table, th, tr, td {
