@@ -3,18 +3,18 @@ body{
 }
 legend {
     background-color: #bed4fc;
-    font-size: 1rem;
+    font-size: 1.1rem;
 
 }
 label {
-    font-size: 0.9rem;
+    /* font-size: 0.9rem; */
     margin-top: 0.5rem;
     margin-bottom: 0em;
 
 }
 input {
     text-align: center;
-    font-size: 0.8rem;
+    /* font-size: 0.8rem; */
 }
 p, hr {
     margin: 0.1rem;
