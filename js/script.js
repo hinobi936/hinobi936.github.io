@@ -59,8 +59,10 @@ document.addEventListener("DOMContentLoaded", () => {
     c2 = [],
     tx_tau = [],
     cpl = [],
-    lcp = [];
-
+    lcp = [],
+    equal = [],
+    chislitel = [],
+    znamenatel = [];
   // для рисования графика
 
   let myCanvas = document.getElementById("graf");
@@ -201,21 +203,9 @@ document.addEventListener("DOMContentLoaded", () => {
         c1[i] * (Math.pow(thick_tzpVal, 2) / 2) +
         c2[i] * (Math.pow(thick_tzpVal, 3) / 3);
       tx_tau[i] = tx_tau[i].toFixed(3);
-
       // console.log(tx_tau);
 
       // рассчет теплоемкости cp[i]
-      // console.log(
-      //     tempK[i + 1],
-      //     Math.sqrt(Math.PI),
-      //     bk, bp,
-      //     time[i + 1],
-      //     time[i],
-      //     thick_tzpVal,nro_tzpVal,
-      //     Math.sqrt(ro_tzpVal),
-      //     lambda_kVal, cp_kVal,
-
-      // );
 
       // cp/lambda
       cpl[i] = Number(((tempK[i] - tempP[i]) / bp[i]).toFixed(3));
@@ -224,7 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // lambda/cp
       lcp[i] = Number((bp[i] / (tempK[i] - tempP[i])).toFixed(3));
 
-      let equal =
+      equal[i] =
         tempK[i + 1] -
         ((Math.sqrt(Math.PI) * (bk[i] + bp[i]) * (time[i + 1] - time[i])) /
           (2 * thick_tzpVal * Math.sqrt(ro_tzpVal))) *
@@ -232,22 +222,16 @@ document.addEventListener("DOMContentLoaded", () => {
         (1 / 3) * (bk[i] - bp[i] / 2) * cpl[i];
       console.log(equal);
 
-      let chislitel =
+      chislitel[i] =
         cp_kVal * ro_kVal * thick_kVal * tempK[i] +
         cp_pVal * ro_pVal * thick_pVal * tempP[i] -
         (cp_kVal * ro_kVal * thick_kVal + cp_pVal * ro_pVal * thick_pVal) *
-          equal;
-      let znamenatel = ro_tzpVal * thick_tzpVal * equal - ro_tzpVal * tx_tau[i];
-      cp_mc[i] = chislitel / znamenatel;
+          equal[i];
+      znamenatel[i] =
+        ro_tzpVal * thick_tzpVal * equal[i] - ro_tzpVal * tx_tau[i];
+      cp_mc[i] = chislitel[i] / znamenatel[i];
       cp_mc[i] = Number(cp_mc[i].toFixed(3));
       console.log(equal, chislitel, znamenatel, cp_mc);
-
-      console.log(
-        cp_kVal * ro_kVal * thick_kVal * tempK[i],
-        cp_pVal * ro_pVal * thick_pVal * tempP[i],
-        cp_kVal * ro_kVal * thick_kVal,
-        cp_pVal * ro_pVal * thick_pVal
-      );
 
       // расчет теплопроводности
       lambda_mc[i] =
@@ -262,6 +246,7 @@ document.addEventListener("DOMContentLoaded", () => {
       LambdaMc += lambda_mc[i];
       console.log(CpMc, LambdaMc, cp_mc[i], lambda_mc[i]);
     }
+
     CpMc = Number(CpMc / (N - 1).toFixed(3));
     LambdaMc = Number(LambdaMc / (N - 1).toFixed(3));
   }
@@ -283,7 +268,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // }
 
     // вывод массива на страницу 2й способ
-    calculateData.innerHTML = ` Cp = ${CpMc}, <br> Lambda = ${LambdaMc} `;
+    calculateData.innerHTML = ` 
+    Cреднее арифметичское сp и lambda <br>
+    cp = ${CpMc}, <br> lambda = ${LambdaMc} `;
     dataOut.appendChild(calculateData);
 
     let table = document.createElement("table");
@@ -297,18 +284,179 @@ document.addEventListener("DOMContentLoaded", () => {
 
       tr = document.createElement("tr");
       let td = document.createElement("td");
-      td.innerHTML = `<em> 
-      tau${i + 1} = ${time[i + 1]}<br>
-      tk${i + 1} = ${tempK[i + 1]} <br>
-      tmc${i + 1} = ${tempTZP[i + 1]} <br>
-      tp${i + 1} = ${tempP[i + 1]} <br>
-      bk = ${bk[i]}, bp = ${bp[i]}, <br>
-      c1 = ${c1[i]}, c2 = ${c2[i]}, <br>
-      tx_tau = ${tx_tau[i]}, <br>
-      sqrt (cp/lambda) = ${cpl[i]}<br>
-      sqrt (lambda/cp) = ${lcp[i]}<br>
-      теплоемкость cp_mc = ${cp_mc[i]} , <br>
-      теплопроводность lambda_mc = ${lambda_mc[i]} </em>`;
+      td.innerHTML = `
+      bk[${i}] = (tempK[${i + 1}] - tempK[${i}]) / Math.sqrt(time[${
+        i + 1
+      }] - time[${i}]) = <br>
+      (${tempK[i + 1]} - ${tempK[i]}) / Math.sqrt(${time[i + 1]} - ${
+        time[i]
+      }) = <br>
+      (${tempK[i + 1]} - ${tempK[i]}) / ${Math.sqrt(time[i + 1] - time[i])} = ${
+        bk[i]
+      }
+      ;
+      <br>
+      <br>
+
+      bp[${i}] = (tempP[${i + 1}] - tempP[${i}]) / Math.sqrt(time[${
+        i + 1
+      }] - time[${i}]) = <br>
+      (${tempP[i + 1]} - ${tempP[i]}) / Math.sqrt(${time[i + 1]} - ${
+        time[i]
+      }) = <br>
+      (${tempP[i + 1]} - ${tempP[i]}) / ${Math.sqrt(time[i + 1] - time[i])} = ${
+        bp[i]
+      }
+      <br>
+      <br>
+
+      a = lambda_kVal / (cp_kVal * ro_kVal) = <br>
+      ${lambda_kVal} / (${cp_kVal} * ${ro_kVal}) =  ${
+        lambda_kVal / (cp_kVal * ro_kVal)
+      }      
+      ;
+      <br>
+      <br>
+
+      // Число Фурье <br>
+      Fo = a * (time[${
+        i + 1
+      }] - time[${i}]) / (thick_tzpVal * thick_tzpVal) = <br>
+      ${lambda_kVal / (cp_kVal * ro_kVal)} * 
+      (${time[i + 1]} - ${time[i]}) / (${thick_tzpVal} * ${thick_tzpVal}) = 
+      ${
+        ((lambda_kVal / (cp_kVal * ro_kVal)) * (time[i + 1] - time[i])) /
+        (thick_tzpVal * thick_tzpVal)
+      }      
+      ;
+      <br>
+      <br>
+
+      // Расчет констант с1 и с2 для квадратного уравнения <br><br>
+
+      c1[${i}] =
+        ((tempK[${i}] - tempP[${i}]) * Math.pow(thick_XmcVal, 2) -
+          (tempK[${i}] - tempTZP[${i}]) * Math.pow(thick_tzpVal, 2)) /
+        (thick_tzpVal * thick_XmcVal * (thick_tzpVal - thick_XmcVal)) = <br> <br>
+        
+        ((${tempK[i]} - ${tempP[i]}) * Math.pow(${thick_XmcVal}, 2) -
+          (${tempK[i]} - ${tempTZP[i]}) * Math.pow(${thick_tzpVal}, 2)) /
+        (${thick_tzpVal} * ${thick_XmcVal} * (${thick_tzpVal} - ${thick_XmcVal})) = ${
+        c1[i]
+      }
+        ;
+      <br>
+      <br>
+
+      c2[${i}] =
+        ((tempK[${i}] - tempTZP[${i}]) * thick_tzpVal -
+          (tempK[${i}] - tempP[${i}]) * thick_XmcVal) /
+        (thick_tzpVal * thick_XmcVal * (thick_tzpVal - thick_XmcVal))= <br> <br>
+
+        ((${tempK[i]} - ${tempTZP[i]}) * ${thick_tzpVal} - (${tempK[i]} - ${
+        tempP[i]
+      }) * ${thick_XmcVal}) /
+        (${thick_tzpVal} * ${thick_XmcVal} * (${thick_tzpVal} - ${thick_XmcVal})) = ${
+        c2[i]
+      }
+        ;
+      <br>
+      <br>
+
+      // рассчитываем интеграл <br>
+
+      tx_tau[${i}] = tempP[${i}] * thick_tzpVal + c1[${i}] * (Math.pow(thick_tzpVal, 2) / 2) +
+        c2[${i}] * (Math.pow(thick_tzpVal, 3) / 3) = <br>
+        ${tempP[i]} * ${thick_tzpVal} +
+        ${c1[i]} * (Math.pow(${thick_tzpVal}, 2) / 2) +
+        ${c2[i]} * (Math.pow(${thick_tzpVal}, 3) / 3) = <br>   
+
+        ${tempP[i]} * ${thick_tzpVal} +
+        ${c1[i]} * (${Math.pow(thick_tzpVal, 2)} / 2) +
+        ${c2[i]} * (${Math.pow(thick_tzpVal, 3)} / 3) = ${tx_tau[i]}
+      ;
+      <br>
+      <br>
+
+      // рассчет теплоемкости cp[${i}] <br>
+      // корень из cp/lambda <br>
+      cpl[${i}] = (tempK[${i}] - tempP[${i}]) / bp[${i}]) = <br>
+
+      (${tempK[i]} - ${tempP[i]}) / ${bp[i]} = ${cpl[i]}      
+      ;
+      <br>
+      <br>
+
+      // корень из lambda/cp <br>
+      lcp[${i}] = bp[i] / (tempK[${i}] - tempP[${i}]) = <br>      
+       ${bp[i]} / (${tempK[i]} - ${tempP[i]}) = ${lcp[i]}
+      ;
+      <br>
+      <br>
+
+      Общая скобка в числителе и знаменателе<br>
+      equal =
+        tempK[${i + 1}] -
+        ((Math.sqrt(Math.PI) * (bk[${i}] + bp[${i}]) * (time[${
+        i + 1
+      }] - time[${i}])) /
+          (2 * thick_tzpVal * Math.sqrt(ro_tzpVal))) * lcp[${i}] + 
+        (1 / 3) * (bk[${i}] - bp[${i}] / 2) * cpl[${i}] = <br>
+        ${tempK[i + 1]} -
+        ((Math.sqrt(${Math.PI}) * (${bk[i]} + ${bp[i]}) * (${time[i + 1]} - ${
+        time[i]
+      })) /
+          (2 * ${thick_tzpVal} * Math.sqrt(${ro_tzpVal}))) *
+          ${lcp[i]} +
+        (1 / 3) * (${bk[i]} - ${bp[i]} / 2) * ${cpl[i]} = <br>
+        ${tempK[i + 1]} -
+        ((${Math.sqrt(Math.PI)} * (${bk[i]} + ${bp[i]}) * (${time[i + 1]} - ${
+        time[i]
+      })) /
+          (2 * ${thick_tzpVal} * ${Math.sqrt(ro_tzpVal)})) *
+          ${lcp[i]} +
+        (1 / 3) * (${bk[i]} - ${bp[i]} / 2) * ${cpl[i]} = ${equal[i]}
+        ;
+      <br>
+      <br>
+
+      Считаем числитель<br>
+      chislitel =
+        cp_kVal * ro_kVal * thick_kVal * tempK[${i}] +
+        cp_pVal * ro_pVal * thick_pVal * tempP[${i}] -
+        (cp_kVal * ro_kVal * thick_kVal + cp_pVal * ro_pVal * thick_pVal) * equal = <br>
+          ${cp_kVal} * ${ro_kVal} * ${thick_kVal} * ${tempK[i]} +
+        ${cp_pVal} * ${ro_pVal} * ${thick_pVal} * ${tempP[i]} -
+        (${cp_kVal} * ${ro_kVal} * ${thick_kVal} + ${cp_pVal} * ${ro_pVal} * ${thick_pVal}) *
+          ${equal[i]} = ${chislitel[i]}
+          ;
+      <br>
+      <br>
+
+      Считаем знаменатель<br>
+      znamenatel = ro_tzpVal * thick_tzpVal * equal - ro_tzpVal * tx_tau[${i}] = <br>
+      ${ro_tzpVal} * ${thick_tzpVal} * ${equal[i]} - ${ro_tzpVal} *${ tx_tau[i]} = ${znamenatel[i]}
+      
+      ;
+      <br>
+      <br> 
+
+     Считаем теплоемкость на шаге<br>
+
+      cp_mc[${i}] = chislitel / znamenatel = <br>
+      ${chislitel[i]} / ${znamenatel[i]} = ${cp_mc[i]}      
+      ; 
+      <br>
+      <br>
+
+      Расчет теплопроводности на шаге<br>
+      lambda_mc[${i}] =
+        cp_mc[${i}] * ((bp[${i}] * bp[${i}]) / Math.pow(tempK[${i + 1}] - tempP[${i + 1}], 2)) = <br>
+        ${cp_mc[i]} * ((${bp[i]} * ${bp[i]}) / Math.pow(${tempK[i + 1]} - ${tempP[i + 1]}, 2)) = <br>   
+        ${cp_mc[i]} * ((${bp[i]} * ${bp[i]}) / ${Math.pow(tempK[i + 1] - tempP[i + 1], 2)}) =  ${lambda_mc[i]}  
+        ;
+      <br>
+      `;
 
       tr.appendChild(td);
 

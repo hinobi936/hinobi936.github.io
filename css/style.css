@@ -1,5 +1,5 @@
 body{	
-    font-family: Arial, sans-serif;
+    /* font-family: Arial, sans-serif; */
 }
 legend {
     background-color: #bed4fc;
@@ -24,6 +24,7 @@ table {
     border-spacing: 10px;
     width: 50%;
     margin: 1.2rem auto;
+    font-family: monospace;
 }
 
 table, th, tr, td {
