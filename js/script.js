@@ -160,47 +160,47 @@ document.addEventListener("DOMContentLoaded", () => {
       // расчет коэффициентов bk, bp, bmc
       //toFixed - округление до 3 точки после запятой
       bk[i] = Number(
-        ((tempK[N - 1] - tempK[0]) / Math.sqrt(time[N - 1] - time[0])).toFixed(
+        ((tempK[i + 1] - tempK[i]) / Math.sqrt(time[i + 1] - time[i])).toFixed(
           3
         )
       );
       bp[i] = Number(
-        ((tempP[N - 1] - tempP[0]) / Math.sqrt(time[N - 1] - time[0])).toFixed(
+        ((tempP[i + 1] - tempP[i]) / Math.sqrt(time[i + 1] - time[i])).toFixed(
           3
         )
       );
       bmc[i] = Number(
         (
-          (tempTZP[i + 1] - tempTZP[0]) /
-          Math.sqrt(time[i + 1] - time[0])
+          (tempTZP[i + 1] - tempTZP[i]) /
+          Math.sqrt(time[i + 1] - time[i])
         ).toFixed(3)
       );
       // console.log(bk, bmc, bp);
 
       let a = Number(lambda_kVal / (cp_kVal * ro_kVal));
       // число Фурье при всех итерациях в расчете вышло меньше 0.004
-      let Fo = (a * (time[i + 1] - time[i])) / thick_tzpVal;
+      let Fo = (a * (time[i + 1] - time[i])) / (thick_tzpVal * thick_tzpVal);
       console.log(Fo);
 
       // расчет констант с1 и с2 для квадратного уравнения
       c1[i] =
-        ((tempK[0] - tempP[0]) * Math.pow(thick_XmcVal, 2) -
-          (tempK[0] - tempTZP[0]) * Math.pow(thick_tzpVal, 2)) /
+        ((tempK[i] - tempP[i]) * Math.pow(thick_XmcVal, 2) -
+          (tempK[i] - tempTZP[i]) * Math.pow(thick_tzpVal, 2)) /
         (thick_tzpVal * thick_XmcVal * (thick_tzpVal - thick_XmcVal));
       // console.log(c1);
       c1[i] = c1[i].toFixed(3);
       c2[i] =
-        ((tempK[0] - tempTZP[0]) * thick_tzpVal -
-          (tempK[0] - tempP[0]) * thick_XmcVal) /
+        ((tempK[i] - tempTZP[i]) * thick_tzpVal -
+          (tempK[i] - tempP[i]) * thick_XmcVal) /
         (thick_tzpVal * thick_XmcVal * (thick_tzpVal - thick_XmcVal));
       c2[i] = c2[i].toFixed(3);
 
       // рассчитываем интеграл
-      tx_tau[0] =
-        tempP[0] * thick_tzpVal +
-        c1[0] * (Math.pow(thick_tzpVal, 2) / 2) +
-        c2[0] * (Math.pow(thick_tzpVal, 3) / 3);
-      tx_tau[0] = tx_tau[0].toFixed(3);
+      tx_tau[i] =
+        tempP[i] * thick_tzpVal +
+        c1[i] * (Math.pow(thick_tzpVal, 2) / 2) +
+        c2[i] * (Math.pow(thick_tzpVal, 3) / 3);
+      tx_tau[i] = tx_tau[i].toFixed(3);
 
       // console.log(tx_tau);
 
@@ -218,34 +218,40 @@ document.addEventListener("DOMContentLoaded", () => {
       // );
 
       // cp/lambda
-      cpl[i] = ((tempK[i] - tempP[i]) / bp[i]).toFixed(3);
+      cpl[i] = Number(((tempK[i] - tempP[i]) / bp[i]).toFixed(3));
+      console.log(cpl[i]);
 
       // lambda/cp
-      lcp[i] = (bp[i] / (tempK[i] - tempP[i])).toFixed(3);
+      lcp[i] = Number((bp[i] / (tempK[i] - tempP[i])).toFixed(3));
 
       let equal =
-        tempK[i] -
-        ((Math.sqrt(Math.PI) * (bk[i] + bp[i]) * (time[i + 1] - time[0])) / 2) *
-          thick_tzpVal *
-          Math.sqrt(ro_tzpVal) *
+        tempK[i + 1] -
+        ((Math.sqrt(Math.PI) * (bk[i] + bp[i]) * (time[i + 1] - time[i])) /
+          (2 * thick_tzpVal * Math.sqrt(ro_tzpVal))) *
           lcp[i] +
         (1 / 3) * (bk[i] - bp[i] / 2) * cpl[i];
+      console.log(equal);
 
       let chislitel =
         cp_kVal * ro_kVal * thick_kVal * tempK[i] +
         cp_pVal * ro_pVal * thick_pVal * tempP[i] -
-        (cp_kVal * ro_kVal * thick_kVal +
-          cp_pVal * ro_pVal * thick_pVal * equal);
-
-      let znamenatel = ro_tzpVal * thick_tzpVal * equal - ro_tzpVal * tx_tau[0];
+        (cp_kVal * ro_kVal * thick_kVal + cp_pVal * ro_pVal * thick_pVal) *
+          equal;
+      let znamenatel = ro_tzpVal * thick_tzpVal * equal - ro_tzpVal * tx_tau[i];
       cp_mc[i] = chislitel / znamenatel;
       cp_mc[i] = Number(cp_mc[i].toFixed(3));
-      // console.log(equal, chislitel, znamenatel, cp_mc);
+      console.log(equal, chislitel, znamenatel, cp_mc);
+
+      console.log(
+        cp_kVal * ro_kVal * thick_kVal * tempK[i],
+        cp_pVal * ro_pVal * thick_pVal * tempP[i],
+        cp_kVal * ro_kVal * thick_kVal,
+        cp_pVal * ro_pVal * thick_pVal
+      );
 
       // расчет теплопроводности
       lambda_mc[i] =
-        cp_mc[i] *
-        (((bp[i] * bp[i]) / (tempK[i] - tempP[i])) * (tempK[i] - tempP[i]));
+        cp_mc[i] * ((bp[i] * bp[i]) / Math.pow(tempK[i + 1] - tempP[i + 1], 2));
       lambda_mc[i] = Number(lambda_mc[i].toFixed(3));
       console.log(cp_mc[i], lambda_mc[i]);
     }
@@ -292,12 +298,6 @@ document.addEventListener("DOMContentLoaded", () => {
       tr = document.createElement("tr");
       let td = document.createElement("td");
       td.innerHTML = `<em> 
-      tk(tauK) = ${tempK[N - 1]}<br>
-      tk(tauP) = ${tempK[0]}<br>
-      tp(tauK) = ${tempP[N - 1]}<br>
-      tp(tauP) = ${tempP[0]}<br>
-      tauK = ${time[0]}<br>
-      tauP = ${time[N - 1]}<br>
       tau${i + 1} = ${time[i + 1]}<br>
       tk${i + 1} = ${tempK[i + 1]} <br>
       tmc${i + 1} = ${tempTZP[i + 1]} <br>
