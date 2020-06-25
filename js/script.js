@@ -14,7 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const ro_tzp = document.getElementById("ro_tzp");
 
-  const temperatureValues = document.getElementById("temperatureValues");
+  const temperatureValues = document.querySelectorAll("table");
+  console.log(temperatureValues);
 
   const calculateBtn = document.getElementById("calculate");
   const inputs = document.querySelectorAll("input");
@@ -45,11 +46,12 @@ document.addEventListener("DOMContentLoaded", () => {
     LambdaMc = 0;
 
   // для записи данных времени и температур из таблицы измеренных температур
-  const tempVal = {};
-  let time = [],
-    tempK = [],
-    tempP = [],
-    tempTZP = [],
+  const tempVal = {},
+    calcVal = [];
+  let // time = [],
+    // tempK = [],
+    // tempP = [],
+    // tempTZP = [],
     bk = [],
     bp = [],
     bmc = [],
@@ -125,37 +127,68 @@ document.addEventListener("DOMContentLoaded", () => {
   // чтение данных из таблицы в массив
   function readTemperature() {
     // table
-    const currRows = temperatureValues.querySelectorAll("tr");
-    // чтение строки (tr)
-    for (let j = 1; j < currRows.length; j++) {
-      tempVal[j] = [];
-      const currRow = currRows[j];
-      const cells = currRow.querySelectorAll("td");
 
-      // чтение столбцов (td)
-      for (let k = 0; k < cells.length - 1; k++) {
-        let name = cells[k].children[0].name;
-        // запись значения столбца в массив
-        tempVal[j][name] = cells[k].children[0].value;
-        // console.log(cells[k].children[0].value)
+    for (let i = 0; i < temperatureValues.length; i++) {
+      tempVal[i] = [];
+      const currTable = temperatureValues[i];
+      const currRows = currTable.querySelectorAll("tr");
+      // const currRows = temperatureValues[i].querySelectorAll("tr");
+      // чтение строки (tr)
+      for (let j = 1; j < currRows.length; j++) {
+        tempVal[i][j] = [];
+        const currRow = currRows[j];
+        const cells = currRow.querySelectorAll("td");
+
+        // чтение столбцов (td)
+        for (let k = 0; k < cells.length - 1; k++) {
+          let name = cells[k].children[0].name;
+          // запись значения столбца в массив
+          tempVal[i][j][name] = cells[k].children[0].value;
+          // console.log(cells[k].children[0].value)
+        }
       }
+      console.log(tempVal);
     }
-    // console.log(tempVal)
   }
   // расчет теплопроводности и теплоемкости
   function createMasCharacteristic(massiv) {
-    console.log(massiv);
+    // console.log(massiv);
     // определяем количество строк в таблице (N - количество строк)
-    N = Object.keys(massiv).length;
-    // console.log(Object.keys(massiv).length-1);
-
+    // N = Object.keys(massiv).length;
+    const Mas = Object.keys(massiv).length;
+    // console.log(Object.keys(massiv).length);
+    // console.log(massiv[0].length);
     // заполняем массивы time, tempK, tempP, tempTZP значениями из таблицы
-    for (let i = 0; i < N; i++) {
-      time[i] = Number(massiv[i + 1].time);
-      tempK[i] = Number(massiv[i + 1].tempK);
-      tempTZP[i] = Number(massiv[i + 1].tempTZP);
-      tempP[i] = Number(massiv[i + 1].tempP);
+    for (let i = 0; i < Mas; i++) {
+      calcVal[i] = [];
+      const currRows = massiv[i];
+
+      for (let j = 0; j < currRows.length - 1; j++) {
+        calcVal[i][j] = [];
+        const currRow = currRows[j + 1];
+        // const cells = currRow;
+        // console.log(currRow);
+        // console.log(cells.time);
+        calcVal[i][j].time = currRow.time;
+        calcVal[i][j].tempK = currRow.tempK;
+        calcVal[i][j].tempTZP = currRow.tempTZP;
+        calcVal[i][j].tempP = currRow.tempP;
+
+        // for (let k = 0; k < cells.length - 1; k++) {
+        //   console.log(cells);
+
+        //   calcVal[i][j][k] = cells.time;
+
+        //   console.log(calcVal[s]);
+
+        //   // time[i] = Number(massiv[i + 1].time);
+        //   // tempK[i] = Number(massiv[i + 1].tempK);
+        //   // tempTZP[i] = Number(massiv[i + 1].tempTZP);
+        //   // tempP[i] = Number(massiv[i + 1].tempP);
+        // }
+      }
     }
+    console.log(calcVal);
 
     //рассчет данных
     for (let i = 0; i < N - 1; i++) {
@@ -388,7 +421,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <br>
 
       // корень из lambda/cp <br>
-      lcp[${i}] = bp[i] / (tempK[${i}] - tempP[${i}]) = <br>      
+      lcp[${i}] = bp[${i}] / (tempK[${i}] - tempP[${i}]) = <br>      
        ${bp[i]} / (${tempK[i]} - ${tempP[i]}) = ${lcp[i]}
       ;
       <br>
@@ -435,7 +468,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       Считаем знаменатель<br>
       znamenatel = ro_tzpVal * thick_tzpVal * equal - ro_tzpVal * tx_tau[${i}] = <br>
-      ${ro_tzpVal} * ${thick_tzpVal} * ${equal[i]} - ${ro_tzpVal} *${ tx_tau[i]} = ${znamenatel[i]}
+      ${ro_tzpVal} * ${thick_tzpVal} * ${equal[i]} - ${ro_tzpVal} *${
+        tx_tau[i]
+      } = ${znamenatel[i]}
       
       ;
       <br>
@@ -451,9 +486,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
       Расчет теплопроводности на шаге<br>
       lambda_mc[${i}] =
-        cp_mc[${i}] * ((bp[${i}] * bp[${i}]) / Math.pow(tempK[${i + 1}] - tempP[${i + 1}], 2)) = <br>
-        ${cp_mc[i]} * ((${bp[i]} * ${bp[i]}) / Math.pow(${tempK[i + 1]} - ${tempP[i + 1]}, 2)) = <br>   
-        ${cp_mc[i]} * ((${bp[i]} * ${bp[i]}) / ${Math.pow(tempK[i + 1] - tempP[i + 1], 2)}) =  ${lambda_mc[i]}  
+        cp_mc[${i}] * ((bp[${i}] * bp[${i}]) / Math.pow(tempK[${
+        i + 1
+      }] - tempP[${i + 1}], 2)) = <br>
+        ${cp_mc[i]} * ((${bp[i]} * ${bp[i]}) / Math.pow(${tempK[i + 1]} - ${
+        tempP[i + 1]
+      }, 2)) = <br>   
+        ${cp_mc[i]} * ((${bp[i]} * ${bp[i]}) / ${Math.pow(
+        tempK[i + 1] - tempP[i + 1],
+        2
+      )}) =  ${lambda_mc[i]}  
         ;
       <br>
       `;
