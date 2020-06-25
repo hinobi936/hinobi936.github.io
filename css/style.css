@@ -36,6 +36,9 @@ table th{
     font-weight: bold;
 }
 
+hr {color: black;
+border: darkgrey 1px solid;}
+
 #parameters {
     width: 100%;
     display: inline-block;
