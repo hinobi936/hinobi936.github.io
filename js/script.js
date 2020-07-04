@@ -570,6 +570,11 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.addEventListener("click", (e) => {
-    // console.log(e)
+    e.preventDefault;
+    if (e.target.parentNode.tagName=="TR"){
+      let tr =e.target.parentNode;
+      tr.parentNode.removeChild(tr);
+    }
+    // console.log(e.target.parentNode.tagName)
   });
 });

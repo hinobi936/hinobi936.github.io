@@ -36,6 +36,14 @@ table th{
     font-weight: bold;
 }
 
+table td {
+    padding: 0 .5em;
+}
+
+.deleteRow {
+    cursor: pointer;
+}
+
 hr {color: black;
 border: darkgrey 1px solid;}
 
