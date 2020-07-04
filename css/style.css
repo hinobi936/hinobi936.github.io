@@ -37,7 +37,8 @@ table th{
 }
 
 .deleteRow {
-    margin: 0 0.2em;
+    padding: 0 0.5rem;
+    cursor: pointer;
 }
 
 hr {color: black;
