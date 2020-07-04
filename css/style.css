@@ -36,6 +36,10 @@ table th{
     font-weight: bold;
 }
 
+.deleteRow {
+    margin: 0 0.2em;
+}
+
 hr {color: black;
 border: darkgrey 1px solid;}
 
