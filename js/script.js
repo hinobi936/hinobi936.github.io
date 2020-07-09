@@ -72,7 +72,9 @@ document.addEventListener("DOMContentLoaded", () => {
     ro_iz = 550,
     thick_iz = 0.025,
     tacp = [0],
+    k = [0],
     Skeq = [],
+    Speq = [],
     etaMc;
   // для рисования графика
 
@@ -123,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
       (thick_tzpVal = Number(thick_tzp.value)),
       (thick_XmcVal = Number(thick_Xmc.value)),
       (lambda_kVal = Number(lambda_k.value)),
-      // lambda_pVal = Number(lambda_p.value),
+      (lambda_pVal = Number(lambda_p.value)),
       (cp_kVal = Number(cp_k.value)),
       (cp_pVal = Number(cp_p.value)),
       (ro_kVal = Number(ro_k.value)),
@@ -173,9 +175,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     //рассчет данных
-    for (let i = 1; i < N - 1; i++) {
+    for (let i = 1; i < N; i++) {
       console.log("________________________________");
-      console.log("____________","i = ", i,"____________");
+      console.log("____________", "i = ", i, "____________");
       // console.log("i = ", i);
 
       // расчет коэффициентов bk, bp, bmc
@@ -198,7 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       // console.log(bk, bmc, bp);
 
-      let a = Number(lambda_kVal / (cp_kVal * ro_kVal));
+      let a = Number(0.7 / (1200 * ro_tzpVal));
       // число Фурье при всех итерациях в расчете вышло меньше 0.004
       let Fo = (a * (time[i + 1] - time[i])) / (thick_tzpVal * thick_tzpVal);
       // console.log(Fo);
@@ -217,12 +219,19 @@ document.addEventListener("DOMContentLoaded", () => {
       // c2[i] = c2[i].toFixed(3);
 
       // рассчитываем интеграл
-      tx_tau[i] =
-        tempK[i - 1] * thick_tzpVal +
-        c1[i] * (Math.pow(thick_tzpVal, 2) / 2) +
-        c2[i] * (Math.pow(thick_tzpVal, 3) / 3);
+      // tx_tau[i] =
+      // tempP[i - 1] * thick_tzpVal +
+      // c1[i] * (Math.pow(thick_tzpVal, 2) / 2) +
+      // c2[i] * (Math.pow(thick_tzpVal, 3) / 3);
       // tx_tau[i] = tx_tau[i].toFixed(3);
-      // console.log(tx_tau);
+      tx_tau[i] =
+        (thick_XmcVal * (tempK[i] + tempTZP[i])) / 2 +
+        ((thick_tzpVal - thick_XmcVal) / 2) * tempTZP[i] +
+        ((thick_tzpVal - thick_XmcVal) / 2) * tempP[i];
+      console.log("интеграл tx_tau = ", tx_tau);
+
+      let hpe = thick_pVal * Math.sqrt((0.7 * 920 * 2700) / (1500 * 550 * 100));
+      console.log(hpe);
 
       // температура межслоя средняя
       tmc[i] = (tempK[i] - tempTZP[i]) / (tempK[i] - tempP[i]);
@@ -243,6 +252,12 @@ document.addEventListener("DOMContentLoaded", () => {
         (cp_kVal * ro_kVal * thick_kVal +
           cp_mc[i - 1] * ro_tzpVal * thick_tzpVal +
           cp_pVal * ro_pVal * thick_pEq[i]);
+      console.log("tacp = ", tacp[i]);
+
+      // k[i] = thick_pEq[i] / thick_pVal;
+      // k[i] = thick_pVal / thick_pVal;
+      k[i] = 1.2;
+      console.log("ki = ", k[i]);
 
       // тепловой поток Skeq
       Skeq[i] =
@@ -251,26 +266,55 @@ document.addEventListener("DOMContentLoaded", () => {
           (cp_kVal * ro_kVal * thick_kVal) / Math.sqrt(time[i] - time[i - 1]));
       console.log("Skei = ", Skeq[i]);
 
-      // расчет теплопроводности
+      Speq[i] =
+        Skeq[i] * k[i] +
+        (bp[i] * (cp_pVal * ro_pVal * thick_pEq[i])) /
+          (2 * Math.sqrt(time[i] - time[i - 1]));
+
+      console.log("Spei = ", Speq[i]);
+
+      // расчет теплопроводности (в районе 1 ~ 1.1 это норма)
       lambda_mc[i] =
-        (thick_tzpVal * Skeq[i] * (etaMc * etaMc - etaMc)) /
-        ((tempK[i] - tempP[i]) * (etaMc * etaMc - tmc[i]));
+        (1.5 * ((Skeq[i] - Speq[i]) * thick_tzpVal)) / (tempK[i] - tempP[i]);
+      console.log("lambda новая версия = ", lambda_mc[i]);
+
+      // lambda_mc[i] =
+      // (thick_tzpVal * Skeq[i] * (etaMc * etaMc - etaMc)) /
+      // ((tempK[i] - tempP[i]) * (etaMc * etaMc - tmc[i]));
 
       console.log("lambda = ", lambda_mc[i]);
       // lambda_mc[i] = Number(lambda_mc[i].toFixed(3));
 
       // рассчет теплоемкости cp[i]
-      chislitel = 2 * Skeq[i] * (etaMc - tmc[i]) * (time[i] - time[i - 1]);
+      // chislitel = Skeq[i] * (etaMc - tmc[i]) * (time[i] - time[i - 1]);
+      // znamenatel =
+      //   ro_tzpVal *
+      //   thick_tzpVal *
+      //   (tempK[i] -
+      //     tacp[i] +
+      //     (Skeq[i] *
+      //       thick_tzpVal *
+      //       (3 * (etaMc * etaMc) - 2 * etaMc - tmc[i])) /
+      //       (6 * lambda_mc[i] * (etaMc * etaMc - tmc[i])));
+      // cp_mc[i] = chislitel / znamenatel;
+      // cp_mc[i] =
+      // (lambda_mc[i] * ((tempK[i] - tempP[i]) * (tempK[i] - tempP[i]))) /
+      // (bp[i] * bp[i] * (thick_tzpVal * thick_tzpVal));
+
       znamenatel =
-        ro_tzpVal *
-        thick_tzpVal *
-        (tempK[i] -
-          tacp[i] +
-          (Skeq[i] *
-            thick_tzpVal *
-            (3 * (etaMc * etaMc) - 2 * etaMc - tmc[i])) /
-            (6 * lambda_mc[i] * (etaMc * etaMc - tmc[i])));
-      cp_mc[i] = chislitel / znamenatel;
+        (3.14 / 4) *
+        ((thick_tzpVal * thick_tzpVal * bk[i] * bk[i]) /
+          ((tempK[i] - tacp[i]) * (tempK[i] - tacp[i])));
+
+      cp_mc[i] = 1.5*(lambda_mc[i] / ro_tzpVal) * (1 / znamenatel);
+      // cp_mc[i] =
+        // (4 / (3.14 * ro_tzpVal * lambda_mc[i])) *
+        // Math.pow(
+          // (Math.sqrt(Math.PI) / 2) *
+            // Math.sqrt(lambda_kVal * cp_kVal * ro_kVal) -
+            // (cp_kVal * ro_kVal * thick_kVal) / Math.sqrt(time[i] - time[i - 1]),
+          // 2
+        // );
 
       console.log("cp = ", cp_mc[i]);
       // console.log('--------------------');
@@ -279,19 +323,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // среднее арифметическое значений теплоемкости и теплопроводности
-    for (let i = 0; i < N - 1; i++) {
+    for (let i = 1; i < N; i++) {
+      // console.log("________________________________");
       CpMc += cp_mc[i];
       LambdaMc += lambda_mc[i];
       // console.log("CpMc = ", CpMc, "LambdaMc = ", LambdaMc);
     }
 
     console.log("________________________________");
-    console.log("****", "средне-арифметическое значение","****");
+    console.log("****", "средне-арифметическое значение", "****");
     CpMc = Number(CpMc / (N - 1).toFixed(3));
     LambdaMc = Number(LambdaMc / (N - 1).toFixed(3));
     console.log("CpMc = ", CpMc);
     console.log("LambdaMc = ", LambdaMc);
-
   }
 
   function printMas() {
