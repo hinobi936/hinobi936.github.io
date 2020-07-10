@@ -551,10 +551,6 @@ document.addEventListener("DOMContentLoaded", () => {
             (1 / 3) * (${bk[t][i]} - ${bp[t][i]} / 2) * ${cpl[t][i]} = ${
           equal[t][i]
         }
-            ;
-          <br>
-          <br>
-    
           ;
           <br>
           <br> 
@@ -587,6 +583,33 @@ document.addEventListener("DOMContentLoaded", () => {
         table.appendChild(tr);
       }
       dataOut.appendChild(table);
+    }
+  }
+
+  function printMasLittle() {
+    dataOut.innerHTML = "";
+    // вывод массива на страницу
+    // for (let i = 0; i <= N + 1; i++) {
+    //     calculateData = document.createElement('p');
+    //     let row = document.createElement('p');
+    //     row.className = 'widthLayer';
+    //     row.innerHTML = `<hr>СЛОЙ ${i}<hr>`;
+    //     dataOut.appendChild(row);
+    //     for (let j = 0; j <= N + 1; j++) {
+    //         time_layer = T[i][j].toFixed(3);
+    //         calculateData.innerHTML += time_layer + ' | ШАГ ' + j + ' | ';
+    //     };
+    //     dataOut.appendChild(calculateData);
+    // }
+
+    // вывод массива на страницу 2й способ
+    for (let t = 0; t < Mas; t++) {
+      let calculateData = document.createElement("p");
+      calculateData.innerHTML = ` <hr> <br>
+        Cреднее арифметичское сp и lambda для ${t + 1} испытания <br>
+        cp = ${CpMc[t]}, <br> lambda = ${LambdaMc[t]} `;
+      dataOut.appendChild(calculateData);
+
     }
   }
 
@@ -629,7 +652,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateValues();
     readTemperature();
     createMasCharacteristic(tempVal);
-    printMas();
+    printMasLittle();
     // printGraf();
   });
 
