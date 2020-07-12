@@ -12,8 +12,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const cp_p = document.getElementById("cp_p");
   const ro_p = document.getElementById("ro_p");
 
-  const ro_tzp = document.getElementById("ro_tzp");
+  const ro_tzp = document.getElementsByClassName("ro_tzp");
   const cp_tzp = document.getElementById("cp_tzp");
+  console.log(ro_tzp.length);
+  
 
   const temperatureValues = document.querySelectorAll("table");
 
@@ -35,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // плотность крышки, подложки и углепластика соответственно
     ro_kVal,
     ro_pVal,
-    ro_tzpVal,
+    ro_tzpVal=[],
     cp_tzpVal,
     // число итераций
     N,
@@ -141,10 +143,15 @@ document.addEventListener("DOMContentLoaded", () => {
       (cp_pVal = Number(cp_p.value)),
       (ro_kVal = Number(ro_k.value)),
       (ro_pVal = Number(ro_p.value)),
-      (ro_tzpVal = Number(ro_tzp.value)),
+      // (ro_tzpVal = Number(ro_tzp.value)),
       (cp_tzpVal = Number(cp_tzp.value)),
       (CpMc = [0]),
       (LambdaMc = [0]);
+      for (let i = 0; i < ro_tzp.length; i++) {
+        ro_tzpVal[i] = Number(ro_tzp[i].value);
+        console.log(ro_tzpVal[i]);
+
+      }
   }
 
   // чтение данных из таблицы в массив
@@ -247,7 +254,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
         // console.log(bk, bmc, bp);
 
-        let a = Number(0.7 / (1200 * ro_tzpVal));
+        let a = Number(0.7 / (1200 * ro_tzpVal[t]));
         // число Фурье при всех итерациях в расчете вышло меньше 0.004
         let Fo = (a * (time1 - time0)) / (thick_tzpVal * thick_tzpVal);
         // console.log(Fo);
@@ -296,13 +303,14 @@ document.addEventListener("DOMContentLoaded", () => {
         tacp[t][i] =
           (cp_kVal * ro_kVal * thick_kVal * tempK1 +
             cp_pVal * ro_pVal * thick_pEq[t][i] * tempP1 +
-            cp_mc[t][i - 1] * ro_tzpVal * tx_tau[t][i]) /
+            cp_mc[t][i - 1] * ro_tzpVal[t] * tx_tau[t][i]) /
           (cp_kVal * ro_kVal * thick_kVal +
-            cp_mc[t][i - 1] * ro_tzpVal * thick_tzpVal +
+            cp_mc[t][i - 1] * ro_tzpVal[t] * thick_tzpVal +
             cp_pVal * ro_pVal * thick_pEq[t][i]);
         console.log("tacp = ", tacp[t][i]);
 
         // k[i] = thick_pEq[t][i] / thick_pVal;
+        // console.log("ki = ", k[i]);
         // k[i] = thick_pVal / thick_pVal;
         k[i] = 1.2;
         console.log("ki = ", k[i]);
@@ -356,7 +364,7 @@ document.addEventListener("DOMContentLoaded", () => {
           ((thick_tzpVal * thick_tzpVal * bk[t][i] * bk[t][i]) /
             ((tempK1 - tacp[t][i]) * (tempK1 - tacp[t][i])));
 
-        cp_mc[t][i] = 1.5 * (lambda_mc[t][i] / ro_tzpVal) * (1 / znamenatel);
+        cp_mc[t][i] = 1.5 * (lambda_mc[t][i] / ro_tzpVal[t]) * (1 / znamenatel);
         // cp_mc[t][i] =
         // (4 / (3.14 * ro_tzpVal * lambda_mc[t][i])) *
         // Math.pow(
@@ -533,20 +541,20 @@ document.addEventListener("DOMContentLoaded", () => {
             ((Math.sqrt(Math.PI) * (bk[${i}] + bp[${i}]) * (time[${
           i + 1
         }] - time[${i}])) /
-              (2 * thick_tzpVal * Math.sqrt(ro_tzpVal))) * lcp[${i}] + 
+              (2 * thick_tzpVal * Math.sqrt(ro_tzpVal[t]))) * lcp[${i}] + 
             (1 / 3) * (bk[${i}] - bp[${i}] / 2) * cpl[${i}] = <br>
             ${tempK1} -
             ((Math.sqrt(${Math.PI}) * (${bk[t][i]} + ${
           bp[t][i]
         }) * (${time1} - ${time0})) /
-              (2 * ${thick_tzpVal} * Math.sqrt(${ro_tzpVal}))) *
+              (2 * ${thick_tzpVal} * Math.sqrt(${ro_tzpVal[t]}))) *
               ${lcp[t][i]} +
             (1 / 3) * (${bk[t][i]} - ${bp[t][i]} / 2) * ${cpl[t][i]} = <br>
             ${tempK1} -
             ((${Math.sqrt(Math.PI)} * (${bk[t][i]} + ${
           bp[t][i]
         }) * (${time1} - ${time0})) /
-              (2 * ${thick_tzpVal} * ${Math.sqrt(ro_tzpVal)})) *
+              (2 * ${thick_tzpVal} * ${Math.sqrt(ro_tzpVal[t])})) *
               ${lcp[t][i]} +
             (1 / 3) * (${bk[t][i]} - ${bp[t][i]} / 2) * ${cpl[t][i]} = ${
           equal[t][i]
