@@ -15,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const ro_tzp = document.getElementsByClassName("ro_tzp");
   const cp_tzp = document.getElementById("cp_tzp");
   console.log(ro_tzp.length);
-  
 
   const temperatureValues = document.querySelectorAll("table");
 
@@ -37,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // плотность крышки, подложки и углепластика соответственно
     ro_kVal,
     ro_pVal,
-    ro_tzpVal=[],
+    ro_tzpVal = [],
     cp_tzpVal,
     // число итераций
     N,
@@ -147,11 +146,10 @@ document.addEventListener("DOMContentLoaded", () => {
       (cp_tzpVal = Number(cp_tzp.value)),
       (CpMc = [0]),
       (LambdaMc = [0]);
-      for (let i = 0; i < ro_tzp.length; i++) {
-        ro_tzpVal[i] = Number(ro_tzp[i].value);
-        console.log(ro_tzpVal[i]);
-
-      }
+    for (let i = 0; i < ro_tzp.length; i++) {
+      ro_tzpVal[i] = Number(ro_tzp[i].value);
+      console.log(ro_tzpVal[i]);
+    }
   }
 
   // чтение данных из таблицы в массив
@@ -332,7 +330,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // расчет теплопроводности (в районе 1 ~ 1.1 это норма)
         lambda_mc[t][i] =
-          (1.5 * ((Skeq[t][i] - Speq[t][i]) * thick_tzpVal)) /
+          (1.6 * ((Skeq[t][i] - Speq[t][i]) * thick_tzpVal)) /
           (tempK1 - tempP1);
         console.log("lambda новая версия = ", lambda_mc[t][i]);
 
@@ -364,7 +362,7 @@ document.addEventListener("DOMContentLoaded", () => {
           ((thick_tzpVal * thick_tzpVal * bk[t][i] * bk[t][i]) /
             ((tempK1 - tacp[t][i]) * (tempK1 - tacp[t][i])));
 
-        cp_mc[t][i] = 1.5 * (lambda_mc[t][i] / ro_tzpVal[t]) * (1 / znamenatel);
+        cp_mc[t][i] = (lambda_mc[t][i] / ro_tzpVal[t]) * (1 / znamenatel);
         // cp_mc[t][i] =
         // (4 / (3.14 * ro_tzpVal * lambda_mc[t][i])) *
         // Math.pow(
@@ -617,7 +615,6 @@ document.addEventListener("DOMContentLoaded", () => {
         Cреднее арифметичское сp и lambda для ${t + 1} испытания <br>
         cp = ${CpMc[t]}, <br> lambda = ${LambdaMc[t]} `;
       dataOut.appendChild(calculateData);
-
     }
   }
 
