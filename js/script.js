@@ -206,6 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
     for (let t = 0; t < Mas; t++) {
       console.log("________________________________");
       console.log("____________", "t = ", t, "____________");
+      console.log("ro tzp = ", );
       (bk[t] = []), (bp[t] = []), (bmc[t] = []);
       (c1[t] = []),
         (c2[t] = []),
@@ -244,6 +245,9 @@ document.addEventListener("DOMContentLoaded", () => {
         bk[t][i] = Number(
           ((tempK1 - tempK0) / Math.sqrt(time1 - time0)).toFixed(3)
         );
+
+        console.log("bki = ", bk[t][i]);
+
         bp[t][i] = Number(
           ((tempP1 - tempP0) / Math.sqrt(time1 - time0)).toFixed(3)
         );
@@ -378,23 +382,22 @@ document.addEventListener("DOMContentLoaded", () => {
         // cp_mc[t][i] = Number(cp_mc[t][i].toFixed(3));
       }
 
-      CpMc[t] = 0;
-      LambdaMc[t] = 0;
+      CpMc[t] = [0];
+      LambdaMc[t] = [0];
 
       // среднее арифметическое значений теплоемкости и теплопроводности
       for (let i = 1; i < calcVal[t].length; i++) {
         // console.log("________________________________");
-        CpMc[t] += cp_mc[t][i];
-        LambdaMc[t] += lambda_mc[t][i];
-        console.log("CpMc[t] = ", CpMc, "LambdaMc[t] = ", LambdaMc);
+        console.log("________________________________");
+        console.log("****", "средне-арифметическое значение", "****");
+        CpMc[t][i] = (cp_mc[t][i] + cp_mc[t][i - 1]) / 2;
+        LambdaMc[t][i] = lambda_mc[t][i];
+        // console.log("CpMc[t][i] = ", CpMc[t][i], "LambdaMc[t][i] = ", LambdaMc[t][i]);
+        // CpMc[t][i] = Number(CpMc[t][i] / (calcVal[t].length - 1).toFixed(3));
+        // LambdaMc[t][i] = Number(LambdaMc[t][i] / (calcVal[t].length - 1).toFixed(3));
+        console.log("CpMc[t][i] = ", CpMc[t][i]);
+        console.log("LambdaMc[t][i] = ", LambdaMc[t][i]);
       }
-
-      console.log("________________________________");
-      console.log("****", "средне-арифметическое значение", "****");
-      CpMc[t] = Number(CpMc[t] / (calcVal[t].length - 1).toFixed(3));
-      LambdaMc[t] = Number(LambdaMc[t] / (calcVal[t].length - 1).toFixed(3));
-      console.log("CpMc[t] = ", CpMc);
-      console.log("LambdaMc[t] = ", LambdaMc);
     }
   }
 
@@ -419,7 +422,7 @@ document.addEventListener("DOMContentLoaded", () => {
       let calculateData = document.createElement("p");
       calculateData.innerHTML = ` <hr> <br>
         Cреднее арифметичское сp и lambda для ${t + 1} испытания <br>
-        cp = ${CpMc[t]}, <br> lambda = ${LambdaMc[t]} `;
+        cp = ${CpMc[t]}, <br> lambda = ${LambdaMc[t][i]} `;
       dataOut.appendChild(calculateData);
 
       let table = document.createElement("table");
@@ -611,10 +614,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // вывод массива на страницу 2й способ
     for (let t = 0; t < Mas; t++) {
       let calculateData = document.createElement("p");
-      calculateData.innerHTML = ` <hr> <br>
-        Cреднее арифметичское сp и lambda для ${t + 1} испытания <br>
-        cp = ${CpMc[t]}, <br> lambda = ${LambdaMc[t]} `;
-      dataOut.appendChild(calculateData);
+      calculateData.innerHTML= `<hr> Cреднее арифметичское сp и lambda для ${t + 1} испытания`
+      for (let i = 1; i < calcVal[t].length; i++) {
+        calculateData.innerHTML+= ` <hr> 
+          cp${i} = ${CpMc[t][i]}, <br> lambda${i} = ${LambdaMc[t][i]} `;
+        dataOut.appendChild(calculateData);
+      }
     }
   }
 

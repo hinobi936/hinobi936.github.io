@@ -1,74 +1,79 @@
-body{	
-    /* font-family: Arial, sans-serif; */
+body {
+  /* font-family: Arial, sans-serif; */
 }
 legend {
-    background-color: #bed4fc;
-    font-size: 1.1rem;
-
+  background-color: #bed4fc;
+  font-size: 1.1rem;
 }
 label {
-    /* font-size: 0.9rem; */
-    margin-top: 0.5rem;
-    margin-bottom: 0em;
-
+  /* font-size: 0.9rem; */
+  margin-top: 0.5rem;
+  margin-bottom: 0em;
 }
 input {
-    text-align: center;
-    /* font-size: 0.8rem; */
+  text-align: center;
+  /* font-size: 0.8rem; */
 }
-p, hr {
-    margin: 0.1rem;
-    text-align: center;
+p,
+hr {
+  margin: 0.1rem;
+  text-align: center;
 }
 table {
-    border-spacing: 10px;
-    width: 50%;
-    margin: 1.2rem auto;
-    font-family: monospace;
+  border-spacing: 10px;
+  width: 50%;
+  margin: 1.2rem auto;
+  font-family: monospace;
 }
 
-table, th, tr, td {
-    text-align: center;
-    /* padding: 5px 10px; */
+table,
+th,
+tr,
+td {
+  text-align: center;
+  /* padding: 5px 10px; */
 }
 
-table th{
-    font-weight: bold;
+table th {
+  font-weight: bold;
 }
 
 .deleteRow {
-    padding: 0 0.5rem;
-    cursor: pointer;
+  padding: 0 0.5rem;
+  cursor: pointer;
 }
 
-hr {color: black;
-border: darkgrey 1px solid;}
+hr {
+  color: black;
+  border: darkgrey 1px solid;
+  margin: 0.3rem;
+}
 
 #parameters {
-    width: 100%;
-    display: inline-block;
+  width: 100%;
+  display: inline-block;
 }
 .parameters_inputs {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 .parameters_edge {
-    flex-basis: 50%;
+  flex-basis: 50%;
 }
 fieldset {
-    max-width: 20%;
-    margin-bottom: 1rem;
+  max-width: 20%;
+  margin-bottom: 1rem;
 }
-.widthLayer{
-    text-align: center;
-    background-color: rgb(210, 199, 255);
+.widthLayer {
+  text-align: center;
+  background-color: rgb(210, 199, 255);
 }
 
 #graf {
-    width: 50%;
-    max-height: 70vh;   
-    border: darkgrey 2px solid;
-    display: block;
-    margin: auto;
+  width: 50%;
+  max-height: 70vh;
+  border: darkgrey 2px solid;
+  display: block;
+  margin: auto;
 }
