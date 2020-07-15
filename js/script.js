@@ -256,10 +256,10 @@ document.addEventListener("DOMContentLoaded", () => {
         );
         // console.log(bk, bmc, bp);
 
-        let a = Number(0.7 / (1200 * ro_tzpVal[t]));
+        let a = Number(0.7 / (1100 * ro_tzpVal[t]));
         // число Фурье при всех итерациях в расчете вышло меньше 0.004
         let Fo = (a * (time1 - time0)) / (thick_tzpVal * thick_tzpVal);
-        // console.log(Fo);
+        console.log(Fo);
 
         // расчет констант с1 и с2 для квадратного уравнения
         c1[t][i] =
@@ -284,11 +284,11 @@ document.addEventListener("DOMContentLoaded", () => {
           (thick_XmcVal * (tempK1 + tempTZP1)) / 2 +
           ((thick_tzpVal - thick_XmcVal) / 2) * tempTZP1 +
           ((thick_tzpVal - thick_XmcVal) / 2) * tempP1;
-        console.log("интеграл tx_tau = ", tx_tau);
+        console.log("интеграл tx_tau = ", tx_tau[t][i]);
 
         let hpe =
           thick_pVal * Math.sqrt((0.7 * 920 * 2700) / (1500 * 550 * 100));
-        console.log(hpe);
+        // console.log(hpe);
 
         // температура межслоя средняя
         tmc[t][i] = (tempK1 - tempTZP1) / (tempK1 - tempP1);
