@@ -244,6 +244,8 @@ document.addEventListener("DOMContentLoaded", () => {
         bk[t][i] = Number(
           ((tempK1 - tempK0) / Math.sqrt(time1 - time0)).toFixed(3)
         );
+        console.log("bk = ", bk[t][i]);
+
         bp[t][i] = Number(
           ((tempP1 - tempP0) / Math.sqrt(time1 - time0)).toFixed(3)
         );
@@ -280,7 +282,7 @@ document.addEventListener("DOMContentLoaded", () => {
           (thick_XmcVal * (tempK1 + tempTZP1)) / 2 +
           ((thick_tzpVal - thick_XmcVal) / 2) * tempTZP1 +
           ((thick_tzpVal - thick_XmcVal) / 2) * tempP1;
-        console.log("интеграл tx_tau = ", tx_tau);
+        console.log("интеграл tx_tau = ", tx_tau[t][i]);
 
         let hpe =
           thick_pVal * Math.sqrt((0.7 * 920 * 2700) / (1500 * 550 * 100));
@@ -299,12 +301,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // средняя температура tacpi
         tacp[t][i] =
-          (cp_kVal * ro_kVal * thick_kVal * tempK1 +
-            cp_pVal * ro_pVal * thick_pEq[t][i] * tempP1 +
-            cp_mc[t][i - 1] * ro_tzpVal[t] * tx_tau[t][i]) /
-          (cp_kVal * ro_kVal * thick_kVal +
-            cp_mc[t][i - 1] * ro_tzpVal[t] * thick_tzpVal +
-            cp_pVal * ro_pVal * thick_pEq[t][i]);
+        (cp_kVal * ro_kVal * thick_kVal * tempK1 +
+        cp_pVal * ro_pVal * thick_pEq[t][i] * tempP1 +
+        cp_mc[t][i - 1] * ro_tzpVal[t] * tx_tau[t][i]) /
+        (cp_kVal * ro_kVal * thick_kVal +
+        cp_mc[t][i - 1] * ro_tzpVal[t] * thick_tzpVal +
+        cp_pVal * ro_pVal * thick_pEq[t][i]);
+        console.log("tacp = ", tacp[t][i]);
+        
+        tacp[t][i] = (tempK1 + tempP1) / 2;
+
         console.log("tacp = ", tacp[t][i]);
 
         // k[i] = thick_pEq[t][i] / thick_pVal;
@@ -330,7 +336,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // расчет теплопроводности (в районе 1 ~ 1.1 это норма)
         lambda_mc[t][i] =
-          (1.6 * ((Skeq[t][i] - Speq[t][i]) * thick_tzpVal)) /
+          (1.95 * ((Skeq[t][i] - Speq[t][i]) * thick_tzpVal)) /
           (tempK1 - tempP1);
         console.log("lambda новая версия = ", lambda_mc[t][i]);
 
@@ -361,6 +367,7 @@ document.addEventListener("DOMContentLoaded", () => {
           (3.14 / 4) *
           ((thick_tzpVal * thick_tzpVal * bk[t][i] * bk[t][i]) /
             ((tempK1 - tacp[t][i]) * (tempK1 - tacp[t][i])));
+        console.log("знаменатель = ", znamenatel);
 
         cp_mc[t][i] = (lambda_mc[t][i] / ro_tzpVal[t]) * (1 / znamenatel);
         // cp_mc[t][i] =
